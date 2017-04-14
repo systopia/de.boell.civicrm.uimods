@@ -1,0 +1,47 @@
+{
+    "_lookup": ["table_name"],
+    "_translate": ["title"],
+    "name": "organisation_name",
+    "title": "Organisationsname",
+    "extends": "Organization",
+    "style": "Inline",
+    "collapse_display": "0",
+    "is_active": "1",
+    "table_name": "civicrm_value_organisation_name",
+    "is_multiple": "0",
+    "collapse_adv_display": "1",
+    "is_reserved": "0",
+    "_fields": [{
+            "_lookup": ["column_name"],
+            "_translate": ["label"],
+            "name": "organisation_name_1",
+            "label": "Zeile 1",
+            "data_type": "String",
+            "html_type": "Text",
+            "is_required": "0",
+            "is_searchable": "0",
+            "is_search_range": "0",
+            "is_active": "1",
+            "is_view": "0",
+            "text_length": "128",
+            "column_name": "row_1",
+            "in_selector": "0"
+        },
+        {
+            "_lookup": ["column_name"],
+            "_translate": ["label"],
+            "name": "organisation_name_2",
+            "label": "Zeile 2",
+            "data_type": "String",
+            "html_type": "Text",
+            "is_required": "0",
+            "is_searchable": "0",
+            "is_search_range": "0",
+            "is_active": "1",
+            "is_view": "0",
+            "text_length": "128",
+            "column_name": "row_2",
+            "in_selector": "0"
+        }
+    ]
+}

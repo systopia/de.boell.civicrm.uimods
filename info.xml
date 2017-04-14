@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <extension key="de.boell.civicrm.uimods" type="module">
   <file>uimods</file>
-  <name>UI Modifikatinen</name>
+  <name>UI Modifikationen</name>
   <description>UI Modifikationen für die HBS</description>
   <license>AGPL-3.0</license>
   <maintainer>
