@@ -17,6 +17,48 @@
 require_once 'uimods.civix.php';
 
 /**
+ * Hook implementation:
+ * If custom organisation name is changed -> update organization_name
+ */
+function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
+  if ($op == 'edit') {
+    if ($groupID == CRM_Uimods_Config::getOrgnameGroupID()) {
+      // re-calculate organisation name
+      $field_1_id = CRM_Core_BAO_CustomField::getCustomFieldID('organisation_name_1', 'organisation_name');
+      $field_2_id = CRM_Core_BAO_CustomField::getCustomFieldID('organisation_name_2', 'organisation_name');
+      $values = civicrm_api3('Contact', 'getsingle', array(
+          'id'     => $entityID,
+          'return' => "custom_{$field_1_id},custom_{$field_2_id},organization_name"));
+
+      // render new name
+      $new_name = trim(trim($values["custom_{$field_1_id}"]) . ' ' . trim($values["custom_{$field_2_id}"]));
+      if ($new_name != $values['organization_name']) {
+        // store new name
+        civicrm_api3('Contact', 'create', array(
+          'id' => $entityID,
+          'organization_name' => $new_name));
+      }
+    }
+  }
+}
+
+/**
+ * Hook implementation:
+ * Inject JS code adjusting summary view
+ */
+function uimods_civicrm_pageRun(&$page) {
+  if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary') {
+    // this is the right view -> inject JS
+    $orgname_group_id = CRM_Uimods_Config::getOrgnameGroupID();
+    $script = file_get_contents(__DIR__ . '/js/organisation_name.js');
+    $script = str_replace('ORGNAME_GROUP_ID', $orgname_group_id, $script);
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $script,
+      ));
+  }
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
