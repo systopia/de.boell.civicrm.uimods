@@ -17,8 +17,7 @@
 require_once 'uimods.civix.php';
 
 /**
- * Hook implementation:
- * If custom organisation name is changed -> update organization_name
+ * Hook implementation: If custom organisation name is changed -> update organization_name
  */
 function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
   if ($op == 'edit') {
@@ -43,8 +42,7 @@ function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
 }
 
 /**
- * Hook implementation:
- * Inject JS code adjusting summary view
+ * Hook implementation: Inject JS code adjusting summary view
  */
 function uimods_civicrm_pageRun(&$page) {
   if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary') {
@@ -57,6 +55,21 @@ function uimods_civicrm_pageRun(&$page) {
       ));
   }
 }
+
+/**
+ * Hook implementation: New Tokens
+ */
+function uimods_civicrm_tokens( &$tokens ) {
+  CRM_Uimods_AddressTokens::addTokens($tokens);
+}
+
+/**
+ * Hook implementation: New Tokens
+ */
+function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+  CRM_Uimods_AddressTokens::tokenValues($values, $cids, $job, $tokens, $context);
+}
+
 
 /**
  * Implements hook_civicrm_config().
