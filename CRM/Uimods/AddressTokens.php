@@ -24,7 +24,8 @@ class CRM_Uimods_AddressTokens {
     $location_types = civicrm_api3('LocationType', 'get', array('is_active' => 1, 'return' => 'display_name,name'));
     $new_tokens = array();
     foreach ($location_types['values'] as $location_type) {
-      $section_name = "address_{$location_type['id']}";
+      $section_name = "Adresse_{$location_type['id']}";
+
       // address tokens
       $new_tokens["{$section_name}.{$location_type['id']}_street_address"]         = "Strassenname ({$location_type['display_name']})";
       $new_tokens["{$section_name}.{$location_type['id']}_supplemental_address_1"] = "Adresszusatz 1 ({$location_type['display_name']})";
@@ -36,9 +37,11 @@ class CRM_Uimods_AddressTokens {
       // extra tokens
       $new_tokens["{$section_name}.{$location_type['id']}_master"]                 = "Name Master ({$location_type['display_name']})";
       $new_tokens["{$section_name}.{$location_type['id']}_master_1"]               = "Name Master (Zeile 1) ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_master_1"]               = "Name Master (Zeile 1) ({$location_type['display_name']})";
+      $new_tokens["{$section_name}.{$location_type['id']}_master_2"]               = "Name Master (Zeile 2) ({$location_type['display_name']})";
+
+      // store results
+      $tokens["{$section_name}"] = $new_tokens;
     }
-    $tokens["{$section_name}"] = $new_tokens;
   }
 
   /**
@@ -53,22 +56,36 @@ class CRM_Uimods_AddressTokens {
    */
   public static function tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
     // extract contact_ids
-    if (isset($cids['contact_id'])) {
+    if (is_string($cids)) {
+      $contact_ids = explode(',', $cids);
+    } elseif (isset($cids['contact_id'])) {
       $contact_ids = array($cids['contact_id']);
+    } elseif (is_array($cids)) {
+      $contact_ids = $cids;
     } else {
-      $contact_id = $cids;
+      error_log("Cannot interpret cids: " . json_encode($cids));
+      return;
     }
 
-    error_log(json_encode($contact_ids));
     foreach ($tokens as $token_class => $token_list) {
-      if (preg_match('/^address_\d+$/', $token_class)) {
+      if (preg_match('/^Adresse_\d+$/', $token_class)) {
         $location_type_id = substr($token_class, 8);
         $all_addresses = self::loadAddresses($contact_ids, $location_type_id);
-        foreach ($all_addresses as $address) {
-          foreach ($token_list as $token) {
-            $field = substr($token, strlen($location_type_id) + 1);
-            $values[$contact_id][$token] = $address[$field];
-            error_log("FIELD $token to $field, value is " . $address[$field]);
+        foreach ($contact_ids as $contact_id) {
+          if (isset($all_addresses[$contact_id])) {
+            $address = $all_addresses[$contact_id];
+            foreach ($token_list as $token) {
+              $field = substr($token, strlen($location_type_id) + 1);
+              $values[$contact_id]["{$token_class}.{$token}"] = $address[$field];
+              // error_log("FIELD {$token_class}.{$token} to $field, value is " . $address[$field]);
+            }
+          } else {
+            // this guy doesn't have this address
+            foreach ($token_list as $token) {
+              $field = substr($token, strlen($location_type_id) + 1);
+              $values[$contact_id]["{$token_class}.{$token}"] = '';
+              // error_log("FIELD {$token_class}.{$token}n set to empty string");
+            }
           }
         }
       }
@@ -77,13 +94,19 @@ class CRM_Uimods_AddressTokens {
 
 
   protected static function loadAddresses($contact_ids, $location_type_id) {
-    // TODO: cache
+    // TODO: cache?
     $query = civicrm_api3('Address', 'get', array(
       'contact_id'       => array('IN' => $contact_ids),
       'location_type_id' => $location_type_id,
-      'return'           => 'street_address,supplemental_address_1,supplemental_address_2,postal_code,city,country_id,master_id',
+      'return'           => 'street_address,supplemental_address_1,supplemental_address_2,postal_code,city,country_id,master_id,contact_id',
       'options'          => array('limit' => 0),
       ));
-    return $query['values'];
+
+    // index by contact
+    $contactId_2_address = array();
+    foreach ($query['values'] as $address) {
+      $contactId_2_address[$address['contact_id']] = $address;
+    }
+    return $contactId_2_address;
   }
 }
