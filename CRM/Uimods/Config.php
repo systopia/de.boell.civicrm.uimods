@@ -17,6 +17,7 @@
 class CRM_Uimods_Config {
 
   private static $orgname_group_id = NULL;
+  private static $orgname_fields   = NULL;
 
   /**
    * get CustomGroup ID of the orgnisation_names
@@ -27,6 +28,36 @@ class CRM_Uimods_Config {
       self::$orgname_group_id = $group['id'];
     }
     return self::$orgname_group_id;
+  }
+
+  /**
+   * return the field name of the first field as
+   * API parameter, i.e. "custom_xx"
+   *
+   * @param $number  only supposed to be 1 or 2
+   */
+  public static function getOrgnameField($number) {
+    $fields = self::getOrgnameFields();
+    foreach ($fields as $field) {
+      if ($field['name'] == "organisation_name_{$number}") {
+        return "custom_{$field['id']}";
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * get all the fields from the orgname field group
+   */
+  public static function getOrgnameFields() {
+    if (self::$orgname_fields == NULL) {
+      $query = civicrm_api3('CustomField', 'get', array(
+        'custom_group_id' => self::getOrgnameGroupID(),
+        'options'         => array('limit' => 0),
+        ));
+      self::$orgname_fields = $query['values'];
+    }
+    return self::$orgname_fields;
   }
 
 }

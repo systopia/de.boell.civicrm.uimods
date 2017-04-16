@@ -148,16 +148,18 @@ class CRM_Uimods_AddressTokens {
 
       // step 2: load all master contacts and set values in $contactId_2_address
       $masterContactId_2_contactId = array_flip($contactId_2_masterContactId);
+      $orgname_line_1 = CRM_Uimods_Config::getOrgnameField(1);
+      $orgname_line_2 = CRM_Uimods_Config::getOrgnameField(2);
       $master_contactquery = civicrm_api3('Contact', 'get', array(
         'id'      => array('IN' => array_values($contactId_2_masterContactId)),
-        'return'  => 'display_name,custom_3,custom_4',
+        'return'  => "display_name,{$orgname_line_1},{$orgname_line_2}",
         'options' => array('limit' => 0),
         ));
       foreach ($master_contactquery['values'] as $master_contact) {
         $contact_id = $masterContactId_2_contactId[$master_contact['id']];
         $contactId_2_address[$contact_id]['master'] = $master_contact['display_name'];
-        $contactId_2_address[$contact_id]['master_1'] = $master_contact['custom_3'];
-        $contactId_2_address[$contact_id]['master_2'] = $master_contact['custom_4'];
+        $contactId_2_address[$contact_id]['master_1'] = $master_contact[$orgname_line_1];
+        $contactId_2_address[$contact_id]['master_2'] = $master_contact[$orgname_line_2];
       }
     }
 
