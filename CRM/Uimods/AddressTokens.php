@@ -70,10 +70,11 @@ class CRM_Uimods_AddressTokens {
     foreach ($tokens as $token_class => $token_list) {
       if (preg_match('/^Adresse_\d+$/', $token_class)) {
         $location_type_id = substr($token_class, 8);
-        $all_addresses = self::loadAddresses($contact_ids, $location_type_id);
+        $includes_master_tokens = self::includesMasterTokens($token_list);
+        $location_type_addresses = self::loadAddresses($contact_ids, $location_type_id, $includes_master_tokens);
         foreach ($contact_ids as $contact_id) {
-          if (isset($all_addresses[$contact_id])) {
-            $address = $all_addresses[$contact_id];
+          if (isset($location_type_addresses[$contact_id])) {
+            $address = $location_type_addresses[$contact_id];
             foreach ($token_list as $token) {
               $field = substr($token, strlen($location_type_id) + 1);
               $values[$contact_id]["{$token_class}.{$token}"] = $address[$field];
@@ -92,8 +93,25 @@ class CRM_Uimods_AddressTokens {
     }
   }
 
+  /**
+   * just check if the token list includes tokens that
+   * require loading the master contact (address sharing)
+   */
+  protected static function includesMasterTokens($token_list) {
+    foreach ($token_list as $token) {
+      if (strstr($token, 'master')) {
+        return TRUE;
+      }
+    }
 
-  protected static function loadAddresses($contact_ids, $location_type_id) {
+    return FALSE;
+  }
+
+  /**
+   * loads all addresses with a given type for the contact list
+   * If $load_master is true, the fields 'master', 'master_1' and 'master_2' will be popuplated
+   */
+  protected static function loadAddresses($contact_ids, $location_type_id, $load_master = FALSE) {
     // TODO: cache?
     $query = civicrm_api3('Address', 'get', array(
       'contact_id'       => array('IN' => $contact_ids),
@@ -104,9 +122,45 @@ class CRM_Uimods_AddressTokens {
 
     // index by contact
     $contactId_2_address = array();
+    $contactId_2_masterAddressId  = array();
     foreach ($query['values'] as $address) {
       $contactId_2_address[$address['contact_id']] = $address;
+      if (!empty($address['master_id'])) {
+        $contactId_2_masterAddressId[$address['contact_id']] = $address['master_id'];
+      }
     }
+
+    // add master information if requested
+    // TODO: speed up with SQL?
+    if ($load_master && !empty($contactId_2_masterAddressId)) {
+      // step 1: load all master addresses
+      $master_query = civicrm_api3('Address', 'get', array(
+        'id'      => array('IN' => array_values($contactId_2_masterAddressId)),
+        'return'  => 'id,contact_id',
+        'options' => array('limit' => 0),
+        ));
+      $contactId_2_masterContactId = array();
+      $masterAddressId_2_contactId = array_flip($contactId_2_masterAddressId);
+      foreach ($master_query['values'] as $master_address) {
+        $contact_id = $masterAddressId_2_contactId[$master_address['id']];
+        $contactId_2_masterContactId[$contact_id] = $master_address['contact_id'];
+      }
+
+      // step 2: load all master contacts and set values in $contactId_2_address
+      $masterContactId_2_contactId = array_flip($contactId_2_masterContactId);
+      $master_contactquery = civicrm_api3('Contact', 'get', array(
+        'id'      => array('IN' => array_values($contactId_2_masterContactId)),
+        'return'  => 'display_name,custom_3,custom_4',
+        'options' => array('limit' => 0),
+        ));
+      foreach ($master_contactquery['values'] as $master_contact) {
+        $contact_id = $masterContactId_2_contactId[$master_contact['id']];
+        $contactId_2_address[$contact_id]['master'] = $master_contact['display_name'];
+        $contactId_2_address[$contact_id]['master_1'] = $master_contact['custom_3'];
+        $contactId_2_address[$contact_id]['master_2'] = $master_contact['custom_4'];
+      }
+    }
+
     return $contactId_2_address;
   }
 }
