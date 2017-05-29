@@ -26,6 +26,9 @@ class CRM_Uimods_AddressTokens {
     $tokens["Address"]["Address.address_master_1"] = "Name Master (Zeile 1)";
     $tokens["Address"]["Address.address_master_2"] = "Name Master (Zeile 2)";
 
+    // add special country token (HBS-4944)
+    $tokens["Address"]["Address.address_country_int"] = "International Country";
+
     // add tokens for other location types
     $location_types = civicrm_api3('LocationType', 'get', array('is_active' => 1, 'return' => 'display_name,name'));
     $new_tokens = array();
@@ -97,12 +100,22 @@ class CRM_Uimods_AddressTokens {
         }
       } elseif ($token_class == 'Address') {
         // add tokens for primary addresses (HBS-4943)
-        if (self::includesMasterTokens($token_list)) {
+        if (self::includesMasterTokens($token_list) || self::includesIntlToken($token_list)) {
           $addresses = self::loadAddresses($contact_ids, NULL, TRUE);
           foreach ($contact_ids as $contact_id) {
             $address = $addresses[$contact_id];
             foreach ($token_list as $token) {
               switch ($token) {
+                case 'address_country_int':
+                  // add special country token (HBS-4944)
+                  if (!empty($address['country_id']) && $address['country_id'] != 1082) {
+                    // this is an international (not German) country
+                    $values[$contact_id]["{$token_class}.{$token}"] = CRM_Core_PseudoConstant::country($address['country_id']);
+                  } else {
+                    $values[$contact_id]["{$token_class}.{$token}"] = '';
+                  }
+                  continue;
+
                 case 'address_master':
                   $values[$contact_id]["{$token_class}.{$token}"] = $address['master'];
                   continue;
@@ -135,7 +148,19 @@ class CRM_Uimods_AddressTokens {
         return TRUE;
       }
     }
+    return FALSE;
+  }
 
+  /**
+   * just check if the token list includes the
+   * "International Country" token
+   */
+  protected static function includesIntlToken($token_list) {
+    foreach ($token_list as $token) {
+      if ('address_country_int' == substr($token, (strlen($token)-19))) {
+        return TRUE;
+      }
+    }
     return FALSE;
   }
 
