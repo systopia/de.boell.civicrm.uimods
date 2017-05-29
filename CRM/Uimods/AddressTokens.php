@@ -21,6 +21,12 @@ class CRM_Uimods_AddressTokens {
    * @see https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_tokens
    */
   public static function addTokens(&$tokens) {
+    // add tokens for primary addresses (HBS-4943)
+    $tokens["Address"]["Address.address_master"]   = "Name Master";
+    $tokens["Address"]["Address.address_master_1"] = "Name Master (Zeile 1)";
+    $tokens["Address"]["Address.address_master_2"] = "Name Master (Zeile 2)";
+
+    // add tokens for other location types
     $location_types = civicrm_api3('LocationType', 'get', array('is_active' => 1, 'return' => 'display_name,name'));
     $new_tokens = array();
     foreach ($location_types['values'] as $location_type) {
@@ -89,6 +95,32 @@ class CRM_Uimods_AddressTokens {
             }
           }
         }
+      } elseif ($token_class == 'Address') {
+        // add tokens for primary addresses (HBS-4943)
+        if (self::includesMasterTokens($token_list)) {
+          $addresses = self::loadAddresses($contact_ids, NULL, TRUE);
+          foreach ($contact_ids as $contact_id) {
+            $address = $addresses[$contact_id];
+            foreach ($token_list as $token) {
+              switch ($token) {
+                case 'address_master':
+                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master'];
+                  continue;
+
+                case 'address_master_1':
+                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master_1'];
+                  continue;
+
+                case 'address_master_2':
+                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master_2'];
+                  continue;
+
+                default:
+                  continue;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -113,12 +145,19 @@ class CRM_Uimods_AddressTokens {
    */
   protected static function loadAddresses($contact_ids, $location_type_id, $load_master = FALSE) {
     // TODO: cache?
-    $query = civicrm_api3('Address', 'get', array(
+
+    // compile query
+    $query_parameters = array(
       'contact_id'       => array('IN' => $contact_ids),
       'location_type_id' => $location_type_id,
       'return'           => 'street_address,supplemental_address_1,supplemental_address_2,postal_code,city,country_id,master_id,contact_id',
-      'options'          => array('limit' => 0),
-      ));
+      'options'          => array('limit' => 0));
+    if ($location_type_id) {
+      $query_parameters['location_type_id'] = $location_type_id;
+    } else {
+      $query_parameters['is_primary'] = 1;
+    }
+    $query = civicrm_api3('Address', 'get', $query_parameters);
 
     // index by contact
     $contactId_2_address = array();

@@ -49,8 +49,9 @@ class CRM_Uimods_NameTokens {
     }
 
     // check if we need to spring into action...
-    if (    in_array('organization_name_1', $tokens['Contact'])
-         || in_array('organization_name_2', $tokens['Contact'])) {
+    if (isset($tokens['Contact']) && (
+            in_array('organization_name_1', $tokens['Contact'])
+         || in_array('organization_name_2', $tokens['Contact']))) {
       $field_name_1 = CRM_Uimods_Config::getOrgnameField(1);
       $field_name_2 = CRM_Uimods_Config::getOrgnameField(2);
       $data = civicrm_api3('Contact', 'get', array(
