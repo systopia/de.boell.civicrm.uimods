@@ -30,23 +30,22 @@ class CRM_Uimods_AddressTokens {
     $tokens["Address"]["Address.address_country_int"] = "International Country";
 
     // add tokens for other location types
-    $location_types = civicrm_api3('LocationType', 'get', array('is_active' => 1, 'return' => 'display_name,name'));
+    $location_type_map = self::getLocationTypeMap();
     $new_tokens = array();
-    foreach ($location_types['values'] as $location_type) {
-      $section_name = "Adresse_{$location_type['id']}";
+    foreach ($location_type_map as $location_type_id => $section_name) {
 
       // address tokens
-      $new_tokens["{$section_name}.{$location_type['id']}_street_address"]         = "Strassenname ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_supplemental_address_1"] = "Adresszusatz 1 ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_supplemental_address_2"] = "Adresszusatz 2 ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_postal_code"]            = "Postleitzahl ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_city"]                   = "Stadt ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_country"]                = "Land ({$location_type['display_name']})";
+      $new_tokens["{$section_name}.{$location_type_id}_street_address"]         = "Strassenname";
+      $new_tokens["{$section_name}.{$location_type_id}_supplemental_address_1"] = "Adresszusatz 1";
+      $new_tokens["{$section_name}.{$location_type_id}_supplemental_address_2"] = "Adresszusatz 2";
+      $new_tokens["{$section_name}.{$location_type_id}_postal_code"]            = "Postleitzahl";
+      $new_tokens["{$section_name}.{$location_type_id}_city"]                   = "Stadt";
+      $new_tokens["{$section_name}.{$location_type_id}_country"]                = "Land";
 
       // extra tokens
-      $new_tokens["{$section_name}.{$location_type['id']}_master"]                 = "Name Master ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_master_1"]               = "Name Master (Zeile 1) ({$location_type['display_name']})";
-      $new_tokens["{$section_name}.{$location_type['id']}_master_2"]               = "Name Master (Zeile 2) ({$location_type['display_name']})";
+      $new_tokens["{$section_name}.{$location_type_id}_master"]                 = "Name Master";
+      $new_tokens["{$section_name}.{$location_type_id}_master_1"]               = "Name Master (Zeile 1)";
+      $new_tokens["{$section_name}.{$location_type_id}_master_2"]               = "Name Master (Zeile 2)";
 
       // store results
       $tokens["{$section_name}"] = $new_tokens;
@@ -76,9 +75,12 @@ class CRM_Uimods_AddressTokens {
       return;
     }
 
+    // load our mapping
+    $location_type_map = array_flip(self::getLocationTypeMap());
+
     foreach ($tokens as $token_class => $token_list) {
-      if (preg_match('/^Adresse_\d+$/', $token_class)) {
-        $location_type_id = substr($token_class, 8);
+      if (isset($location_type_map[$token_class])) {
+        $location_type_id = $location_type_map[$token_class];
         $includes_master_tokens = self::includesMasterTokens($token_list);
         $location_type_addresses = self::loadAddresses($contact_ids, $location_type_id, $includes_master_tokens);
         foreach ($contact_ids as $contact_id) {
@@ -92,7 +94,6 @@ class CRM_Uimods_AddressTokens {
           } else {
             // this guy doesn't have this address
             foreach ($token_list as $token) {
-              $field = substr($token, strlen($location_type_id) + 1);
               $values[$contact_id]["{$token_class}.{$token}"] = '';
               // error_log("FIELD {$token_class}.{$token}n set to empty string");
             }
@@ -174,7 +175,6 @@ class CRM_Uimods_AddressTokens {
     // compile query
     $query_parameters = array(
       'contact_id'       => array('IN' => $contact_ids),
-      'location_type_id' => $location_type_id,
       'return'           => 'street_address,supplemental_address_1,supplemental_address_2,postal_code,city,country_id,master_id,contact_id',
       'options'          => array('limit' => 0));
     if ($location_type_id) {
@@ -228,5 +228,32 @@ class CRM_Uimods_AddressTokens {
     }
 
     return $contactId_2_address;
+  }
+
+
+  /**
+   * get a unique map location_type_id => token class name
+   */
+  public static function getLocationTypeMap() {
+    $location_type_map = array();
+    $location_types = civicrm_api3('LocationType', 'get', array(
+      'is_active'     => 1,
+      'options.limit' => 0,
+      'return'        => 'display_name,name'));
+    foreach ($location_types['values'] as $location_type) {
+      $preferred_name = 'Adresse_' . $location_type['display_name'];
+      // token class does not allow any special characters (except '_')
+      $preferred_name = preg_replace('#ä#', 'ae', $preferred_name);
+      $preferred_name = preg_replace('#ü#', 'ue', $preferred_name);
+      $preferred_name = preg_replace('#ö#', 'oe', $preferred_name);
+      $preferred_name = preg_replace('#[^\w]#', '_', $preferred_name);
+      $actual_name = $preferred_name;
+      while (in_array($actual_name, array_values($location_type_map))) {
+        // name already exists -> just extend
+        $actual_name = $actual_name . '_';
+      }
+      $location_type_map[$location_type['id']] = $actual_name;
+    }
+    return $location_type_map;
   }
 }
