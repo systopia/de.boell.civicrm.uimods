@@ -23,6 +23,8 @@ function uimods_adjustSummaryView() {
   cj("div.crm-contact-postal_greeting_display").parent().hide();
   cj("div.crm-contact-preferred_mail_format").parent().hide();
   cj("input[name=communication_style_id]").parent().hide();
+  cj("div.crm-contact_external_identifier_label").parent().hide();
+  cj("div.crm-contact-sic_code").parent().hide();
 }
 
 cj(document).ready(function () {
