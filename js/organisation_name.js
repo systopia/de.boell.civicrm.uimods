@@ -18,7 +18,7 @@ var orgname_group = cj("#custom-set-content-ORGNAME_GROUP_ID");
 var orgname_block = orgname_group.parent().parent();
 
 // move inner part to upper right
-cj("div.contactTopBar > div.contactCardRight").prepend(orgname_block);
+cj("div.contactTopBar > div.contactCardLeft").prepend(orgname_block);
 
 // update contact name when changed
 orgname_group.attr('data-dependent-fields', '["#crm-contactname-content"]');
