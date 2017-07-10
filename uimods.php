@@ -156,9 +156,10 @@ function uimods_civicrm_uninstall() {
 function uimods_civicrm_enable() {
   _uimods_civix_civicrm_enable();
 
-  require_once 'CRM/Utils/CustomData.php';
-  $customData = new CRM_Utils_CustomData('de.boell.civicrm.uimods');
-  $customData->syncCustomGroup(__DIR__ . '/resources/custom_group.json');
+  require_once 'CRM/Uimods/CustomData.php';
+  $customData = new CRM_Uimods_CustomData('de.boell.civicrm.uimods');
+  $customData->syncCustomGroup(__DIR__ . '/resources/custom_group_contact_extra.json');
+  $customData->syncCustomGroup(__DIR__ . '/resources/custom_group_organisationsname.json');
 }
 
 /**
