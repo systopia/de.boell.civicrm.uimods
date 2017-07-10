@@ -53,6 +53,11 @@ function uimods_civicrm_pageRun(&$page) {
     CRM_Core_Region::instance('page-footer')->add(array(
       'script' => $script,
       ));
+    $script2 = file_get_contents(__DIR__ . '/js/summary_view_mods.js');
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $script2,
+      ));
+
   }
 }
 

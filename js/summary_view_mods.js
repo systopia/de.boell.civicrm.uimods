@@ -13,12 +13,22 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-// find our stuff
-var orgname_group = cj("#custom-set-content-ORGNAME_GROUP_ID");
-var orgname_block = orgname_group.parent().parent();
 
-// move inner part to upper right
-cj("div.contactTopBar > div.contactCardRight").prepend(orgname_block);
+/**
+ * adjustments for the contact summary view
+ */
+function uimods_adjustSummaryView() {
+  // hide some fields (see #5283)
+  cj("div.crm-contact-email_greeting_display").parent().hide();
+  cj("div.crm-contact-postal_greeting_display").parent().hide();
+  cj("div.crm-contact-preferred_mail_format").parent().hide();
+  cj("input[name=communication_style_id]").parent().hide();
+}
 
-// update contact name when changed
-orgname_group.attr('data-dependent-fields', '["#crm-contactname-content"]');
+cj(document).ready(function () {
+  // call adjustment once
+  uimods_adjustSummaryView();
+
+  // inject data dependency
+  cj(document).bind("ajaxComplete", uimods_adjustSummaryView);
+});
