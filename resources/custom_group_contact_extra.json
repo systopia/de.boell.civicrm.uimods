@@ -12,7 +12,8 @@
     "is_multiple": "0",
     "collapse_adv_display": "1",
     "is_reserved": "0",
-    "_fields": [{
+    "_fields": [
+        {
             "_lookup": ["column_name"],
             "_translate": ["label"],
             "name": "navision_id",
@@ -26,6 +27,38 @@
             "is_view": "0",
             "text_length": "128",
             "column_name": "navision_id",
+            "in_selector": "0"
+        },
+        {
+            "_lookup": ["column_name"],
+            "_translate": ["label"],
+            "name": "creditor_id",
+            "label": "Kreditorennummer",
+            "data_type": "String",
+            "html_type": "Text",
+            "is_required": "0",
+            "is_searchable": "1",
+            "is_search_range": "0",
+            "is_active": "1",
+            "is_view": "0",
+            "text_length": "16",
+            "column_name": "creditor_id",
+            "in_selector": "0"
+        },
+        {
+            "_lookup": ["column_name"],
+            "_translate": ["label"],
+            "name": "debitor_id",
+            "label": "Debitorennummer",
+            "data_type": "String",
+            "html_type": "Text",
+            "is_required": "0",
+            "is_searchable": "1",
+            "is_search_range": "0",
+            "is_active": "1",
+            "is_view": "0",
+            "text_length": "16",
+            "column_name": "debitor_id",
             "in_selector": "0"
         },
         {
