@@ -238,6 +238,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
     require_once 'CRM/Uimods/UserClearance.php';
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
+    $userClearance->buildFormHook();
   }
 }
 
@@ -253,6 +254,7 @@ function hook_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) 
     require_once 'CRM/Uimods/UserClearance.php';
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
+    $userClearance->alterTemplateHook();
   }
 }
 
@@ -269,6 +271,7 @@ function hook_civicrm_validateForm($formName, &$fields, &$files, &$form, &$error
     require_once 'CRM/Uimods/UserClearance.php';
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
+    $userClearance->validateFormHook();
   }
 }
 

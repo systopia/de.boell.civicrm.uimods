@@ -32,7 +32,14 @@ class CRM_Uimods_UserClearance {
    * handles the build form hook action
    */
   public function buildFormHook() {
+    // TODO: add date, prefilled with current date
 
+    // TODO: add category dropdown from option group
+    // ==> how do I get option group? CiviAPIS
+
+    // TODO: add source category
+
+    // TODO: remark (note)
   }
 
   /**
