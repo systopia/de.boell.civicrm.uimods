@@ -229,7 +229,51 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
- * Implements hook_civicrm_postProcess().
+ * Implements hook_civicrm_buildForm()
+ * @param $formName
+ * @param $form
+ */
+function uimods_civicrm_buildForm($formName, &$form) {
+  if ($formName == 'CRM_Contact_Form_Contact') {
+    require_once 'CRM/Uimods/UserClearance.php';
+    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+    // TODO: do stuff here
+  }
+}
+
+/**
+ * Implements hook_civicrm_alterTemplateFile()
+ * @param $formName
+ * @param $form
+ * @param $context
+ * @param $tplName
+ */
+function hook_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
+  if ($formName == 'CRM_Contact_Form_Contact') {
+    require_once 'CRM/Uimods/UserClearance.php';
+    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+    // TODO: do stuff here
+  }
+}
+
+/**
+ * Implements hook_civicrm_validateForm()
+ * @param $formName
+ * @param $fields
+ * @param $files
+ * @param $form
+ * @param $errors
+ */
+function hook_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  if ($formName == 'CRM_Contact_Form_Contact') {
+    require_once 'CRM/Uimods/UserClearance.php';
+    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+    // TODO: do stuff here
+  }
+}
+
+/**
+ * Implements hook_civicrm_postProcess()
  *
  * @param string $formName
  * @param CRM_Core_Form $form
