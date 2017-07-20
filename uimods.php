@@ -62,7 +62,9 @@ function uimods_civicrm_pageRun(&$page) {
 }
 
 /**
- * Hook implementation: Inject JS code into create/edit form
+ * Implements hook_civicrm_buildForm()
+ * @param $formName
+ * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contact_Form_Contact') {
@@ -83,6 +85,15 @@ function uimods_civicrm_buildForm($formName, &$form) {
         'script' => $script,
         ));
     }
+    require_once 'CRM/Uimods/UserClearance.php';
+    if (!empty($form->_contactId)) {
+      $userClearance = new CRM_Uimods_UserClearance($formName, $form, $form->_contactId);
+    } else {
+      $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+    }
+
+    // TODO: do stuff here
+    $userClearance->buildFormHook();
   }
 }
 
@@ -226,20 +237,6 @@ function uimods_civicrm_angularModules(&$angularModules) {
  */
 function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _uimods_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
-
-/**
- * Implements hook_civicrm_buildForm()
- * @param $formName
- * @param $form
- */
-function uimods_civicrm_buildForm($formName, &$form) {
-  if ($formName == 'CRM_Contact_Form_Contact') {
-    require_once 'CRM/Uimods/UserClearance.php';
-    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-    // TODO: do stuff here
-    $userClearance->buildFormHook();
-  }
 }
 
 /**
