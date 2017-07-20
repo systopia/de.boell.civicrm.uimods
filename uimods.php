@@ -228,3 +228,17 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _uimods_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+/**
+ * Implements hook_civicrm_postProcess().
+ *
+ * @param string $formName
+ * @param CRM_Core_Form $form
+ */
+function uimods_civicrm_postProcess($formName, &$form) {
+  if ($formName == 'CRM_Contact_Form_Contact') {
+    require_once 'CRM/Uimods/UserClearance.php';
+    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+    // TODO: do stuff here
+    $userClearance->postProcessHook();
+  }
+}
