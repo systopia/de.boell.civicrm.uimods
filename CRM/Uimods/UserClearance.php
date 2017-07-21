@@ -42,7 +42,6 @@ class CRM_Uimods_UserClearance {
   public function buildFormHook() {
     if (!empty(self::$cid)) {
       // we are in edit mode, nothing to do here!
-      error_log("nothin to do here ... [buildFormHook]");
       return;
     }
     // get the user categories and sources from civi and save them locally
@@ -54,6 +53,11 @@ class CRM_Uimods_UserClearance {
       'user_clearance_date',
       'Nutzungsberechtigung Datum'
     );
+    $this->form->addRule(
+      'user_clearance_date',
+      ts('This field is required.'),
+      'required'
+    );
 
     // add category dropdown from option group
     // ==> how do I get option group? CiviAPIS
@@ -64,6 +68,11 @@ class CRM_Uimods_UserClearance {
       FALSE,
       array('class' => 'user-category')
     );
+    $this->form->addRule(
+      'user_clearence_category',
+      ts('This field is required.'),
+      'required'
+    );
 
     // add source category
     $this->form->add('select',
@@ -72,6 +81,11 @@ class CRM_Uimods_UserClearance {
       $this->sources2label,
       FALSE,
       array('class' => 'user-source')
+    );
+    $this->form->addRule(
+      'user_clearence_source',
+      ts('This field is required.'),
+      'required'
     );
     // remark (note)
     $this->form->add(
@@ -97,9 +111,9 @@ class CRM_Uimods_UserClearance {
   public function validateFormHook() {
     if (!empty(self::$cid)) {
       // nothing to do here, we edited the contact
-      error_log("nothin to do here ... [validateFormHook]");
       return;
-  }
+    }
+
   }
 
   /**
@@ -109,13 +123,26 @@ class CRM_Uimods_UserClearance {
 
     if (!empty(self::$cid)) {
       // nothing to do here, we edited the contact
-      error_log("nothin to do here ... [post hook]");
       return;
     }
 
-    CRM_Uimods_CustomData::resolveCustomFields($params);
+    $values = $this->form->exportValues();
 
+    // create parameter array
+    $params = array(
+      'id'                                                    => $this->form->_contactId,
+      'nutzungsberechtigung.nutzungsberechtigung_datum'       => $values['user_clearance_date'],
+      'nutzungsberechtigung.nutzungsberechtigung_quelle'      => $this->getUserClearanceValueOption($values['user_clearence_source']),
+      'nutzungsberechtigung.nutzungsberechtigung_kategorie'   => $this->getUserClearanceValueOption($values['user_clearence_category']),
+      'nutzungsberechtigung.nutzungsberechtigung_anmerkung'   => $values['user_clearance_note'],
+    );
+    // resolve option IDs to the corrosponding custom_xx names
+    CRM_Uimods_CustomData::resolveCustomFields($params);
+    civicrm_api3('Contact', 'create', $params);
   }
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// internal helper functions
@@ -148,5 +175,19 @@ class CRM_Uimods_UserClearance {
     foreach ($user_sources as $source) {
       $this->sources2label[$source['id']] = $source['label'];
     }
+  }
+
+  /**
+   * Gets the value for the optionValueId for the optionGroup
+   *    --> needed for setting the optionvalue in a contact
+   * @param $optionValueId
+   *
+   * @return the value of the option Id
+   */
+  private function getUserClearanceValueOption($optionValueId) {
+    $result = civicrm_api3('OptionValue', 'getsingle', array(
+      'id' => $optionValueId,
+    ));
+    return $result['value'];
   }
 }
