@@ -51,7 +51,10 @@ class CRM_Uimods_UserClearance {
     $this->form->add(
       'datepicker',
       'user_clearance_date',
-      'Nutzungsberechtigung Datum'
+      'Nutzungsberechtigung Datum',
+      array('class' => 'some-css-class'),
+      TRUE,
+      array('time' => FALSE)  // date picker options, remove the time
     );
     // make form element mandatory
     $this->form->addRule(
