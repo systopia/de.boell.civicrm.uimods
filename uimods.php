@@ -250,7 +250,6 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   if ($formName == 'CRM_Contact_Form_Contact') {
     require_once 'CRM/Uimods/UserClearance.php';
-    error_log("validating .. ");
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
     $userClearance->validateFormHook($fields, $files, $errors);

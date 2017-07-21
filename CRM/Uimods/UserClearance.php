@@ -112,10 +112,8 @@ class CRM_Uimods_UserClearance {
   public function validateFormHook(&$fields, &$files, &$errors) {
     if (!empty(self::$cid)) {
       // nothing to do here, we edited the contact
-      error_log("are we here .. ? ");
       return;
     }
-    error_log("are we here .. ? --> validatin");
     $category = CRM_Utils_Array::value( 'user_clearence_category', $fields );
     if (!$category || $category == '0') {
       $errors['user_clearence_category'] = ' Kategorie ist ein Pflichtfeld';
