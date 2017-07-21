@@ -53,6 +53,7 @@ class CRM_Uimods_UserClearance {
       'user_clearance_date',
       'Nutzungsberechtigung Datum'
     );
+    // make form element mandatory
     $this->form->addRule(
       'user_clearance_date',
       ts('This field is required.'),
@@ -68,6 +69,7 @@ class CRM_Uimods_UserClearance {
       FALSE,
       array('class' => 'user-category')
     );
+    // make form element mandatory
     $this->form->addRule(
       'user_clearence_category',
       ts('This field is required.'),
@@ -82,6 +84,7 @@ class CRM_Uimods_UserClearance {
       FALSE,
       array('class' => 'user-source')
     );
+    // make form element mandatory
     $this->form->addRule(
       'user_clearence_source',
       ts('This field is required.'),
@@ -93,6 +96,10 @@ class CRM_Uimods_UserClearance {
       "user_clearance_note",
       'Nutzerberechtigung Anmerkung'
     );
+
+    // set default values
+    $this->setDefaultDropDownValues();
+
     // add template path for these fields
     CRM_Core_Region::instance('page-body')->add(array(
       'template' => "CRM/Uimods/UserClearanceContactForm.tpl"
@@ -100,20 +107,23 @@ class CRM_Uimods_UserClearance {
   }
 
   /**
-   * handles the alter template hook action
-   */
-  public function alterTemplateHook() {
-
-  }
-  /**
    * handles the validate form hook action
    */
-  public function validateFormHook() {
+  public function validateFormHook(&$fields, &$files, &$errors) {
     if (!empty(self::$cid)) {
       // nothing to do here, we edited the contact
+      error_log("are we here .. ? ");
       return;
     }
-
+    error_log("are we here .. ? --> validatin");
+    $category = CRM_Utils_Array::value( 'user_clearence_category', $fields );
+    if (!$category || $category == '0') {
+      $errors['user_clearence_category'] = ' Kategorie ist ein Pflichtfeld';
+    }
+    $source = CRM_Utils_Array::value( 'user_clearence_source', $fields );
+    if (!$source || $source == '0') {
+      $errors['user_clearence_source'] = ts( 'Quelle ist ein Pflichtfeld' );
+    }
   }
 
   /**
@@ -138,6 +148,8 @@ class CRM_Uimods_UserClearance {
     );
     // resolve option IDs to the corrosponding custom_xx names
     CRM_Uimods_CustomData::resolveCustomFields($params);
+
+    // commit to DB
     civicrm_api3('Contact', 'create', $params);
   }
 
@@ -164,6 +176,8 @@ class CRM_Uimods_UserClearance {
     foreach ($user_categories as $category) {
       $this->category2label[$category['id']] = $category['label'];
     }
+    // this shall be the default value
+    $this->category2label['0'] = "";
 
     $user_sources = civicrm_api3('OptionValue', 'get', array(
       'sequential' => 1,
@@ -175,6 +189,20 @@ class CRM_Uimods_UserClearance {
     foreach ($user_sources as $source) {
       $this->sources2label[$source['id']] = $source['label'];
     }
+    // this shall be the default value and be empty
+    $this->sources2label['0'] = "";
+  }
+
+  /**
+   * sets the default values in the form dropdown elements
+   */
+  private function setDefaultDropDownValues() {
+    $defaults = array(
+      'user_clearence_category'   => '0',
+      'user_clearence_source'     => '0',
+      'user_clearence_date'       => date("Y-m-d"),
+    );
+    $this->form->setDefaults($defaults);
   }
 
   /**

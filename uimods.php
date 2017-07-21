@@ -240,22 +240,6 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
- * Implements hook_civicrm_alterTemplateFile()
- * @param $formName
- * @param $form
- * @param $context
- * @param $tplName
- */
-function hook_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
-  if ($formName == 'CRM_Contact_Form_Contact') {
-    require_once 'CRM/Uimods/UserClearance.php';
-    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-    // TODO: do stuff here
-    $userClearance->alterTemplateHook();
-  }
-}
-
-/**
  * Implements hook_civicrm_validateForm()
  * @param $formName
  * @param $fields
@@ -263,12 +247,13 @@ function hook_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) 
  * @param $form
  * @param $errors
  */
-function hook_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   if ($formName == 'CRM_Contact_Form_Contact') {
     require_once 'CRM/Uimods/UserClearance.php';
+    error_log("validating .. ");
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
-    $userClearance->validateFormHook();
+    $userClearance->validateFormHook($fields, $files, $errors);
   }
 }
 
