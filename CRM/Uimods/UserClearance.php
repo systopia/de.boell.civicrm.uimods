@@ -66,7 +66,7 @@ class CRM_Uimods_UserClearance {
     // add category dropdown from option group
     // ==> how do I get option group? CiviAPIS
     $this->form->add('select',
-      "user_clearence_category",
+      "user_clearance_category",
       'Kategorie',
       $this->category2label,
       FALSE,
@@ -74,14 +74,14 @@ class CRM_Uimods_UserClearance {
     );
     // make form element mandatory
     $this->form->addRule(
-      'user_clearence_category',
+      'user_clearance_category',
       ts('This field is required.'),
       'required'
     );
 
     // add source category
     $this->form->add('select',
-      "user_clearence_source",
+      "user_clearance_source",
       'Quelle',
       $this->sources2label,
       FALSE,
@@ -89,7 +89,7 @@ class CRM_Uimods_UserClearance {
     );
     // make form element mandatory
     $this->form->addRule(
-      'user_clearence_source',
+      'user_clearance_source',
       ts('This field is required.'),
       'required'
     );
@@ -117,13 +117,13 @@ class CRM_Uimods_UserClearance {
       // nothing to do here, we edited the contact
       return;
     }
-    $category = CRM_Utils_Array::value( 'user_clearence_category', $fields );
+    $category = CRM_Utils_Array::value( 'user_clearance_category', $fields );
     if (!$category || $category == '0') {
-      $errors['user_clearence_category'] = ' Kategorie ist ein Pflichtfeld';
+      $errors['user_clearance_category'] = ' Kategorie ist ein Pflichtfeld';
     }
-    $source = CRM_Utils_Array::value( 'user_clearence_source', $fields );
+    $source = CRM_Utils_Array::value( 'user_clearance_source', $fields );
     if (!$source || $source == '0') {
-      $errors['user_clearence_source'] = ts( 'Quelle ist ein Pflichtfeld' );
+      $errors['user_clearance_source'] = ts( 'Quelle ist ein Pflichtfeld' );
     }
   }
 
@@ -143,8 +143,8 @@ class CRM_Uimods_UserClearance {
     $params = array(
       'id'                                                    => $this->form->_contactId,
       'nutzungsberechtigung.nutzungsberechtigung_datum'       => $values['user_clearance_date'],
-      'nutzungsberechtigung.nutzungsberechtigung_quelle'      => $this->getUserClearanceValueOption($values['user_clearence_source']),
-      'nutzungsberechtigung.nutzungsberechtigung_kategorie'   => $this->getUserClearanceValueOption($values['user_clearence_category']),
+      'nutzungsberechtigung.nutzungsberechtigung_quelle'      => $this->getUserClearanceValueOption($values['user_clearance_source']),
+      'nutzungsberechtigung.nutzungsberechtigung_kategorie'   => $this->getUserClearanceValueOption($values['user_clearance_category']),
       'nutzungsberechtigung.nutzungsberechtigung_anmerkung'   => $values['user_clearance_note'],
     );
     // resolve option IDs to the corrosponding custom_xx names
@@ -199,9 +199,9 @@ class CRM_Uimods_UserClearance {
    */
   private function setDefaultDropDownValues() {
     $defaults = array(
-      'user_clearence_category'   => '0',
-      'user_clearence_source'     => '0',
-      'user_clearence_date'       => date("Y-m-d"),
+      'user_clearance_category'   => '0',
+      'user_clearance_source'     => '0',
+      'user_clearance_date'       => date("Y-m-d"),
     );
     $this->form->setDefaults($defaults);
   }
