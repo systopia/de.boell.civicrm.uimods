@@ -67,33 +67,37 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
-  if ($formName == 'CRM_Contact_Form_Contact') {
-    $contact_type = CRM_Utils_Array::value('ct', $_REQUEST);
-    $contact_id   = CRM_Utils_Array::value('cid', $_REQUEST);
-    if ($contact_id) {
-      // this is an update -> look up contact type
-      $contact_type = civicrm_api3('Contact', 'getvalue', array(
-        'id' => $contact_id,
-        'return' => 'contact_type'));
-    }
+  switch ($formName) {
+    case 'CRM_Contact_Form_Contact':
+      $contact_type = CRM_Utils_Array::value('ct', $_REQUEST);
+      $contact_id   = CRM_Utils_Array::value('cid', $_REQUEST);
+      if ($contact_id) {
+        // this is an update -> look up contact type
+        $contact_type = civicrm_api3('Contact', 'getvalue', array(
+          'id' => $contact_id,
+          'return' => 'contact_type'));
+      }
 
-    if ($contact_type == 'Organization') {
-      $script = file_get_contents(__DIR__ . '/js/organisation_create.js');
-      $script = str_replace('OGRNAME_ROW1', CRM_Uimods_Config::getOrgnameField(1), $script);
-      $script = str_replace('OGRNAME_ROW2', CRM_Uimods_Config::getOrgnameField(2), $script);
-      CRM_Core_Region::instance('page-footer')->add(array(
-        'script' => $script,
+      if ($contact_type == 'Organization') {
+        $script = file_get_contents(__DIR__ . '/js/organisation_create.js');
+        $script = str_replace('OGRNAME_ROW1', CRM_Uimods_Config::getOrgnameField(1), $script);
+        $script = str_replace('OGRNAME_ROW2', CRM_Uimods_Config::getOrgnameField(2), $script);
+        CRM_Core_Region::instance('page-footer')->add(array(
+          'script' => $script,
         ));
-    }
-    require_once 'CRM/Uimods/UserClearance.php';
-    if (!empty($form->_contactId)) {
-      $userClearance = new CRM_Uimods_UserClearance($formName, $form, $form->_contactId);
-    } else {
-      $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-    }
-
-    // TODO: do stuff here
-    $userClearance->buildFormHook();
+      }
+      require_once 'CRM/Uimods/UserClearance.php';
+      if (!empty($form->_contactId)) {
+        $userClearance = new CRM_Uimods_UserClearance($formName, $form, $form->_contactId);
+      } else {
+        $userClearance = new CRM_Uimods_UserClearance($formName, $form);
+      }
+      $userClearance->buildFormHook();
+      break;
+//    case:
+//      break;
+    default:
+      break;
   }
 }
 
