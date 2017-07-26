@@ -51,7 +51,7 @@ class CRM_Uimods_UserClearance {
     $this->form->add(
       'datepicker',
       'user_clearance_date',
-      'Nutzungsberechtigung Datum',
+      'Kontakherkunft Datum',
       array('class' => 'some-css-class'),
       TRUE,
       array('time' => FALSE)  // date picker options, remove the time
@@ -97,7 +97,7 @@ class CRM_Uimods_UserClearance {
     $this->form->add(
       'text',
       "user_clearance_note",
-      'Nutzerberechtigung Anmerkung'
+      'Kontakherkunft Anmerkung'
     );
 
     // set default values
