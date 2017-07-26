@@ -24,17 +24,17 @@
             </div>
         </td>
         <td>
-            {capture assign=source}user_clearance_source{/capture}
-            <div id="user-clearance-source">
-                {$form.$source.label}
-                {$form.$source.html}
-            </div>
-        </td>
-        <td>
             {capture assign=category}user_clearance_category{/capture}
             <div id="user-clearance-category">
                 {$form.$category.label}
                 {$form.$category.html}
+            </div>
+        </td>
+        <td>
+            {capture assign=source}user_clearance_source{/capture}
+            <div id="user-clearance-source">
+                {$form.$source.label}
+                {$form.$source.html}
             </div>
         </td>
         <td>
