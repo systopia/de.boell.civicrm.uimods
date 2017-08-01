@@ -21,23 +21,7 @@ require_once 'uimods.civix.php';
  */
 function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
   if ($op == 'edit') {
-    if ($groupID == CRM_Uimods_Config::getOrgnameGroupID()) {
-      // re-calculate organisation name
-      $field_1_id = CRM_Core_BAO_CustomField::getCustomFieldID('organisation_name_1', 'organisation_name');
-      $field_2_id = CRM_Core_BAO_CustomField::getCustomFieldID('organisation_name_2', 'organisation_name');
-      $values = civicrm_api3('Contact', 'getsingle', array(
-          'id'     => $entityID,
-          'return' => "custom_{$field_1_id},custom_{$field_2_id},organization_name"));
-
-      // render new name
-      $new_name = trim(trim($values["custom_{$field_1_id}"]) . ' ' . trim($values["custom_{$field_2_id}"]));
-      if ($new_name != $values['organization_name']) {
-        // store new name
-        civicrm_api3('Contact', 'create', array(
-          'id' => $entityID,
-          'organization_name' => $new_name));
-      }
-    }
+    CRM_Uimods_OrganisationName::customHook($op, $groupID, $entityID, $params);
   }
 }
 
@@ -46,18 +30,8 @@ function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
  */
 function uimods_civicrm_pageRun(&$page) {
   if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary') {
-    // this is the right view -> inject JS
-    $orgname_group_id = CRM_Uimods_Config::getOrgnameGroupID();
-    $script = file_get_contents(__DIR__ . '/js/organisation_name.js');
-    $script = str_replace('ORGNAME_GROUP_ID', $orgname_group_id, $script);
-    CRM_Core_Region::instance('page-footer')->add(array(
-      'script' => $script,
-      ));
-    $script2 = file_get_contents(__DIR__ . '/js/summary_view_mods.js');
-    CRM_Core_Region::instance('page-footer')->add(array(
-      'script' => $script2,
-      ));
-
+    CRM_Uimods_OrganisationName::pageRunHook($page);
+    CRM_Uimods_MinorChanges::pageRunHook($page);
   }
 }
 
@@ -66,23 +40,7 @@ function uimods_civicrm_pageRun(&$page) {
  */
 function uimods_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contact_Form_Contact') {
-    $contact_type = CRM_Utils_Array::value('ct', $_REQUEST);
-    $contact_id   = CRM_Utils_Array::value('cid', $_REQUEST);
-    if ($contact_id) {
-      // this is an update -> look up contact type
-      $contact_type = civicrm_api3('Contact', 'getvalue', array(
-        'id' => $contact_id,
-        'return' => 'contact_type'));
-    }
-
-    if ($contact_type == 'Organization') {
-      $script = file_get_contents(__DIR__ . '/js/organisation_create.js');
-      $script = str_replace('OGRNAME_ROW1', CRM_Uimods_Config::getOrgnameField(1), $script);
-      $script = str_replace('OGRNAME_ROW2', CRM_Uimods_Config::getOrgnameField(2), $script);
-      CRM_Core_Region::instance('page-footer')->add(array(
-        'script' => $script,
-        ));
-    }
+    CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
   }
 }
 
