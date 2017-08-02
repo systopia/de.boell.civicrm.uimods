@@ -56,3 +56,13 @@ function compile_organisation_name() {
 
 cj(line_1).change(compile_organisation_name);
 cj(line_2).change(compile_organisation_name);
+
+// move the Organization_name field after the input fields
+cj("label[for='organization_name']").parent().find('br').first().remove();
+cj("label[for='organization_name']").parent().find('br').first().remove();
+
+cj("<br>").insertAfter(cj(line_2));
+cj('#organization_name').insertAfter(cj(line_2));
+cj("<br>").insertAfter(cj(line_2));
+cj("label[for='organization_name']").insertAfter(cj(line_2));
+cj("<br>").insertAfter(cj(line_2));
