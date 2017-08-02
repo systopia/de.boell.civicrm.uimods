@@ -52,9 +52,12 @@ function uimods_civicrm_buildForm($formName, &$form) {
         $userClearance = new CRM_Uimods_UserClearance($formName, $form);
       }
       $userClearance->buildFormHook();
+
       break;
-//    case:
-//      break;
+    // TODO: more forms to come here, tokens are everywhere!
+    case 'CRM_Contact_Form_Task_PDF':
+      CRM_Uimods_MinorChanges::editTokens();
+      break;
     default:
       break;
   }

@@ -21,6 +21,11 @@
  */
 class CRM_Uimods_MinorChanges {
 
+  /**
+   * executes the page run hook
+   * injects JS to hide fields in the summary view
+   * @param $page
+   */
   public static function pageRunHook(&$page) {
     // add general UI mods
     $script2 = file_get_contents(__DIR__ . '/../../js/summary_view_mods.js');
@@ -29,6 +34,20 @@ class CRM_Uimods_MinorChanges {
     CRM_Core_Region::instance('page-footer')->add(array(
       'script' => $script2,
       ));
+  }
+
+  /**
+   * edits the tokens in the JS-select2 field and hides elements
+   *
+   * elements are specified directly in the js array defined in the remove_tokens.js
+   */
+  public static function editTokens() {
+
+    $script = file_get_contents(__DIR__ . '/../../js/remove_tokens.js');
+
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $script,
+    ));
   }
 
   /**
