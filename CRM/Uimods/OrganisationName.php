@@ -33,7 +33,7 @@ class CRM_Uimods_OrganisationName {
         'return' => 'contact_type'));
     }
 
-    if ($contact_type == 'Organization') {
+    if ($contact_type == 'Organization' || $form->_contactType == 'Organization') {
       $script = file_get_contents(__DIR__ . '/../../js/organisation_create.js');
       $script = str_replace('OGRNAME_ROW1', CRM_Uimods_Config::getOrgnameField(1), $script);
       $script = str_replace('OGRNAME_ROW2', CRM_Uimods_Config::getOrgnameField(2), $script);
