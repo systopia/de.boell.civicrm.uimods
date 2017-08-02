@@ -24,8 +24,21 @@ class CRM_Uimods_MinorChanges {
   public static function pageRunHook(&$page) {
     // add general UI mods
     $script2 = file_get_contents(__DIR__ . '/../../js/summary_view_mods.js');
+    $custom_group_id = self::getCustomGroupID();
+    $script2 = str_replace('__CUSTOM-GROUP-ID__', $custom_group_id, $script2);
     CRM_Core_Region::instance('page-footer')->add(array(
       'script' => $script2,
       ));
+  }
+
+  /**
+   * get CustomGroup ID of the orgnisation_names
+   */
+  public static function getCustomGroupID() {
+      $group = civicrm_api3('CustomGroup', 'getsingle', array(
+        'sequential' => 1,
+        'name' => "nutzungsberechtigung",
+      ));
+    return $group['id'];
   }
 }

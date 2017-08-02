@@ -26,9 +26,8 @@ function uimods_adjustSummaryView() {
   cj("div.crm-contact_external_identifier_label").parent().hide();
   cj("div.crm-contact-sic_code").parent().hide();
 
-  // hide 'Kontaktherkunft' edit and delete options
-  cj("[title='Kontaktherkunft record Bearbeiten']").hide()
-  cj("[title='Lösche Kontaktherkunft record']").hide()
+  // hide 'Kontaktherkunft' edit options
+  cj("#records-__CUSTOM-GROUP-ID__ tbody tr").each(function() {cj(this).find("td:eq(4)").remove();});
 }
 
 cj(document).ready(function () {
