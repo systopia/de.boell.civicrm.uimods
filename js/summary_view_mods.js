@@ -25,6 +25,10 @@ function uimods_adjustSummaryView() {
   cj("input[name=communication_style_id]").parent().hide();
   cj("div.crm-contact_external_identifier_label").parent().hide();
   cj("div.crm-contact-sic_code").parent().hide();
+
+  // hide 'Kontaktherkunft' edit and delete options
+  cj("[title='Kontaktherkunft record Bearbeiten']").hide()
+  cj("[title='Lösche Kontaktherkunft record']").hide()
 }
 
 cj(document).ready(function () {
