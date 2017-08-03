@@ -32,6 +32,8 @@ function uimods_adjustSummaryView() {
 
   // hide 'Kontaktherkunft' edit options
   cj("#records-__CUSTOM-GROUP-ID__ tbody tr").each(function() {cj(this).find("td:eq(4)").remove();});
+  var th_columns = cj("th");
+  cj(th_columns[4]).remove();
 }
 
 cj(document).ready(function () {
