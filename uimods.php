@@ -29,6 +29,7 @@ function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
  * Hook implementation: Inject JS code adjusting summary view
  */
 function uimods_civicrm_pageRun(&$page) {
+  error_log("debug: " . $page->getVar('_name'));
   if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary') {
     CRM_Uimods_OrganisationName::pageRunHook($page);
     CRM_Uimods_MinorChanges::pageRunHook($page);
@@ -41,6 +42,7 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
+  error_log("debug form: " . $formName);
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
@@ -58,6 +60,8 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Contact_Form_Task_PDF':
       CRM_Uimods_MinorChanges::editTokens();
       break;
+    case 'CRM_Event_Form_ManageEvent_EventInfo':
+      CRM_Uimods_EventManagementForm::buildFormHook();
     default:
       break;
   }
