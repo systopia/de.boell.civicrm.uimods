@@ -27,6 +27,7 @@ cj("#organization_name").after("<br/>");
 
 cj("#organization_name").after(cj(line_1));
 cj("#organization_name").after("<br/>");
+cj("#organization_name").after("<span class=\"crm-marker\" title=\"Dieses Feld ist ein Pflichtfeld.\"> *</span>");
 cj("#organization_name").after(cj(label_1));
 cj("#organization_name").after("<br/>");
 
@@ -54,6 +55,7 @@ function compile_organisation_name() {
   cj("#organization_name").val(organisation_name);
 }
 
+cj(line_1).addClass("required");
 cj(line_1).change(compile_organisation_name);
 cj(line_2).change(compile_organisation_name);
 
