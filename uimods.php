@@ -58,6 +58,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
       break;
     // TODO: more forms to come here, tokens are everywhere!
     case 'CRM_Contact_Form_Task_PDF':
+    case 'CRM_Contact_Form_Task_Email':
       CRM_Uimods_MinorChanges::editTokens();
       break;
     case 'CRM_Event_Form_ManageEvent_EventInfo':
