@@ -1,9 +1,15 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
-Version 0.7
+Version 0.8.dev
 ==============================================
-UI Modifications:
-    - reorganize Organization Name
-    - Hide tokens (crmSelect2
-    - Hide fields in quick edit forms
+- Hide tokens (5144)
+- Nutzungsberechtigung (5430)
+- Orgname (5445)
+- Event-Form (5451) WIP
+
+Version 0.7.dev
+==============================================
+- reorganize Organization Name
+- Hide tokens (crmSelect2
+- Hide fields in quick edit forms
