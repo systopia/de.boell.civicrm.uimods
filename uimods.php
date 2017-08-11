@@ -17,6 +17,26 @@
 require_once 'uimods.civix.php';
 
 /**
+ * Implement pre hook
+ */
+function uimods_civicrm_pre($op, $objectName, $id, &$params) {
+  if ($objectName == 'Address') {
+    CRM_Uimods_EmployerRelationship::setAddressEditStart($op, $id, $params);
+  }
+}
+
+/**
+ * Implement post hook
+ */
+function uimods_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Address') {
+    CRM_Uimods_EmployerRelationship::setAddressEditFinish($op, $objectId, $objectRef);
+  } elseif ($objectName == 'Relationship') {
+    CRM_Uimods_EmployerRelationship::postProcessRelationshipCreate($op, $objectId, $objectRef);
+  }
+}
+
+/**
  * Hook implementation: If custom organisation name is changed -> update organization_name
  */
 function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
