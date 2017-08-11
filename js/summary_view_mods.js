@@ -42,8 +42,6 @@ function uimods_adjustSummaryView() {
     setTimeout(function() {
         cj("#records-__CUSTOM-GROUP-ID__").find(".crm-editable").each(function(i) {
                 cj(this).off("click");
-                // cj(this).off("mouseover");
-                // cj(this).off("click");
                 cj(this).css({border: "none", cursor: "default"});
                 cj(this).on("click", function(event){
                     event.stopImmediatePropagation();
