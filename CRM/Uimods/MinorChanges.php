@@ -37,6 +37,18 @@ class CRM_Uimods_MinorChanges {
   }
 
   /**
+   * executes form hook
+   * @param $formName
+   * @param $form
+   */
+  public static function buildFormHook($formName, &$form) {
+    $form_hook_script = file_get_contents(__DIR__ . '/../../js/minor_changes_form.js');
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $form_hook_script,
+    ));
+  }
+
+  /**
    * edits the tokens in the JS-select2 field and hides elements
    *
    * elements are specified directly in the js array defined in the remove_tokens.js
