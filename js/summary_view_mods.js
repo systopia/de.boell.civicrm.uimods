@@ -33,13 +33,14 @@ function uimods_adjustSummaryView() {
 
     // hide 'Kontaktherkunft' edit options
     cj("#records-__CUSTOM-GROUP-ID__ tbody tr").each(function () {
-        cj(this).find("td:eq(4)").remove();
+        cj(this).find("td:eq(4)").hide();
     });
     var th_columns = cj("th");
-    cj(th_columns[4]).remove();
+    cj(th_columns[4]).hide();
+    cj("#records-__CUSTOM-GROUP-ID__").css("width", "100%");
 
     setTimeout(function() {
-        cj("#records-10").find(".crm-editable").each(function(i) {
+        cj("#records-__CUSTOM-GROUP-ID__").find(".crm-editable").each(function(i) {
                 cj(this).off("click");
                 // cj(this).off("mouseover");
                 // cj(this).off("click");
