@@ -68,8 +68,6 @@ function uimods_civicrm_buildForm($formName, &$form) {
       break;
     case "Civi\Angular\Page\Main":
       break;
-    case 'CRM_Event_Form_ManageEvent_EventInfo':
-      CRM_Uimods_EventManagementForm::buildFormHook();
     default:
       break;
   }
