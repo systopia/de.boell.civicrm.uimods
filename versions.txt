@@ -1,6 +1,12 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
+Version 0.9.dev
+==============================================
+- Employer relationships nur bei "geschäftlichen" Adressen (5193)
+- UI Modifikationen (5430)
+- UI Modifikationen (5442)
+
 Version 0.8.dev
 ==============================================
 - Hide tokens (5144)
