@@ -14,10 +14,27 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+/**
+ * Basic configuration values
+ */
 class CRM_Uimods_Config {
 
   private static $orgname_group_id = NULL;
   private static $orgname_fields   = NULL;
+
+  /**
+   * get the "geschäftlich" location type id
+   */
+  public static function getBusinessLocationType() {
+    return 8;
+  }
+
+  /**
+   * get the emplyer relationship type id
+   */
+  public static function getEmployerRelationshipID() {
+    return 5;
+  }
 
   /**
    * get CustomGroup ID of the orgnisation_names
