@@ -21,7 +21,9 @@ require_once 'uimods.civix.php';
  */
 function uimods_civicrm_pre($op, $objectName, $id, &$params) {
   if ($objectName == 'Address') {
-    CRM_Uimods_EmployerRelationship::setAddressEditStart($op, $id, $params);
+    CRM_Uimods_EmployerRelationship::handleAddressPre($op, $id, $params);
+  } elseif ($objectName == 'Relationship') {
+    CRM_Uimods_EmployerRelationship::handleRelationshipPre($op, $id, $params);
   }
 }
 
@@ -30,9 +32,9 @@ function uimods_civicrm_pre($op, $objectName, $id, &$params) {
  */
 function uimods_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Address') {
-    CRM_Uimods_EmployerRelationship::setAddressEditFinish($op, $objectId, $objectRef);
+    CRM_Uimods_EmployerRelationship::handleAddressPost($op, $objectId, $objectRef);
   } elseif ($objectName == 'Relationship') {
-    CRM_Uimods_EmployerRelationship::postProcessRelationshipCreate($op, $objectId, $objectRef);
+    CRM_Uimods_EmployerRelationship::handleRelationshipPost($op, $objectId, $objectRef);
   }
 }
 
