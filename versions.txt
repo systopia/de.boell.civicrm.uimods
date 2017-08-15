@@ -1,6 +1,14 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
+Version 0.9.3.dev
+==============================================
+- Fixed relationship handling (5193)
+
+Version 0.9.1.dev
+==============================================
+- Removed event customisation code (5451)
+
 Version 0.9.dev
 ==============================================
 - Employer relationships nur bei "geschäftlichen" Adressen (5193)
