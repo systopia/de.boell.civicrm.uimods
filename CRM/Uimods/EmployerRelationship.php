@@ -20,8 +20,10 @@
  */
 class CRM_Uimods_EmployerRelationship {
 
-  protected static $_currently_editing_address_location_type = NULL;
   protected static $_currently_editing_contact_id = NULL;
+  protected static $_currently_edited_address_relevant = NULL;
+  protected static $_currently_editing_address_location_type = NULL;
+  protected static $_currently_editing_relationship_new = FALSE;
 
   /**
    * Store the information on which address type we're dealing with
@@ -29,11 +31,27 @@ class CRM_Uimods_EmployerRelationship {
   public static function handleAddressPre($op, $id, $params) {
     if ($op == 'edit' || $op == 'create' || $op == 'delete') {
       $address = $params; // copy params
-      if ($id && (empty($address['location_type_id']) || empty($address['contact_id']))) {
+      // check if attributes are missing
+      if ($id && (!isset($address['master_id']) || empty($address['contact_id'])  || empty($address['location_type_id']))) {
         // load address and fill attributes
         $address = civicrm_api3('Address', 'getsingle', array(
           'id'     => $id,
-          'return' => 'contact_id,location_type_id'));
+          'return' => 'contact_id,master_id,location_type_id'));
+      }
+
+      // this change is relevant, if master_id is changed
+      if (!empty($address['master_id']) || !empty($params['master_id'])) {
+        self::$_currently_edited_address_relevant = TRUE;
+      } else {
+        self::$_currently_edited_address_relevant = FALSE;
+      }
+
+      // store the contact_id
+      if (!empty($address['contact_id'])) {
+        self::$_currently_editing_contact_id = $address['contact_id'];
+      } else {
+        error_log("de.boell.civicrm.uimods: Unexpected preHook data! Contact author.");
+        self::$_currently_editing_contact_id = NULL;
       }
 
       // store the address type
@@ -48,14 +66,6 @@ class CRM_Uimods_EmployerRelationship {
         error_log("de.boell.civicrm.uimods: Unexpected preHook data! Contact author.");
         self::$_currently_editing_address_location_type = 'UNKNOWN';
       }
-
-      // store the contact_id
-      if (!empty($address['contact_id'])) {
-        self::$_currently_editing_contact_id = $address['contact_id'];
-      } else {
-        error_log("de.boell.civicrm.uimods: Unexpected preHook data! Contact author.");
-        self::$_currently_editing_contact_id = NULL;
-      }
     }
   }
 
@@ -64,10 +74,11 @@ class CRM_Uimods_EmployerRelationship {
    */
   public static function handleAddressPost($op, $objectId, $objectRef) {
     // if a relevant address has been manipulated, trigger sync!
-    if (self::$_currently_editing_address_location_type == CRM_Uimods_Config::getBusinessLocationType()) {
-      self::$_currently_editing_address_location_type = NULL;
+    if (self::$_currently_edited_address_relevant) {
+      self::$_currently_edited_address_relevant = FALSE;
       self::synchroniseEmployerRelationships(self::$_currently_editing_contact_id);
     }
+    self::$_currently_edited_address_relevant = FALSE;
     self::$_currently_editing_address_location_type = NULL;
     self::$_currently_editing_contact_id = NULL;
   }
@@ -77,10 +88,8 @@ class CRM_Uimods_EmployerRelationship {
    * @see https://projekte.systopia.de/redmine/issues/5193
    */
   public static function handleRelationshipPre($op, $objectId, $params) {
-    // I don't think we can do a lot at this point
-    // if (self::$_currently_editing_address_location_type) {
-    //   error_log("REL $op "  .json_encode($params));
-    // }
+    // store the fact if this is new
+    self::$_currently_editing_relationship_new = ($objectId == NULL);
   }
 
   /**
@@ -91,11 +100,28 @@ class CRM_Uimods_EmployerRelationship {
     if (self::$_currently_editing_address_location_type && $op == 'create') {
       // only keep automatically created relationships
       //  for location type "GESCHÄFTLICH":
-      if (self::$_currently_editing_address_location_type != CRM_Uimods_Config::getBusinessLocationType()) {
-        // avoid recur loop
+      if (self::$_currently_editing_address_location_type == CRM_Uimods_Config::getBusinessLocationType()) {
+        // avoid recursion:
         self::$_currently_editing_address_location_type = NULL;
+
+        // set start date (which isn't set by the default function)
+        if (self::$_currently_editing_relationship_new) {
+          civicrm_api3('Relationship', 'create', array(
+            'id'         => $objectId,
+            'start_date' => date('Y-m-d')));
+        }
+
+      } else {
+        // to avoid recur loop, set current location type to NULL:
+        $cached_value = self::$_currently_editing_address_location_type;
+        self::$_currently_editing_address_location_type = NULL;
+
         // delete the unwanted relationship
+        // error_log("DELETE automatically generated relationship");
         civicrm_api3('Relationship', 'delete', array('id' => $objectId));
+
+        // restore current location type
+        self::$_currently_editing_address_location_type = $cached_value;
       }
     }
   }
@@ -128,6 +154,7 @@ class CRM_Uimods_EmployerRelationship {
       'option.limit'     => 0))['values'];
 
     // load masters addresses
+    $contact_employer_id = '';
     $master_id_to_contact_id = array();
     $master_address_ids = array();
     foreach ($addresses as $address) {
@@ -162,6 +189,7 @@ class CRM_Uimods_EmployerRelationship {
       foreach ($relationships as $relationship) {
         if ($relationship['contact_id_b'] == $employer_id) {
           $connected_relationship = $relationship;
+          $contact_employer_id = $employer_id;
           break;
           // NEEDED FOR REACTIVATION: the active one has preference
           // if ($relationship['is_active'] || $connected_relationship == NULL) {
@@ -222,5 +250,11 @@ class CRM_Uimods_EmployerRelationship {
         error_log("de.boell.civicrm.uimods: Couldn't end relationship - " . $e->getMessage());
       }
     }
+
+    // finally: set/remove employer_id
+    // error_log("SET $contact_id employer to $contact_employer_id");
+    civicrm_api3('Contact', 'create', array(
+      'id'          => $contact_id,
+      'employer_id' => $contact_employer_id));
   }
 }
