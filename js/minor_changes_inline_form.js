@@ -14,24 +14,5 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*/
 
-
-// hide Anredestil in form
-cj("input[name=communication_style_id]").parent().parent().hide();
-
-// hide help icon
-cj("label[for='email_greeting_id']").closest("tr").find("td:last-child").hide()
-// hide Grussformeln
-cj("label[for='email_greeting_id']").parent().hide();
-cj("label[for='postal_greeting_id']").parent().hide();
-
-// hide preferred mail format
-cj("label[for='preferred_mail_format']").parent().hide();
-
-// input fields
-cj("#email_greeting").parent().hide();
-cj("#postal_greeting").parent().hide();
-
-// Organisations
-// hide SIC field/label
-cj("label[for='sic_code']").hide();
-cj("#sic_code").hide();
+// hide email
+cj("label[for='preferred_mail_format']").parent().parent().hide();

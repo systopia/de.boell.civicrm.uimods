@@ -49,6 +49,18 @@ class CRM_Uimods_MinorChanges {
   }
 
   /**
+   * form hook for inline edit on contacts
+   * @param $formName
+   * @param $form
+   */
+  public static function buildFormHook_InlineEdit($formName, &$form) {
+    $form_hook_inline_script = file_get_contents(__DIR__ . '/../../js/minor_changes_inline_form.js');
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $form_hook_inline_script,
+    ));
+  }
+
+  /**
    * edits the tokens in the JS-select2 field and hides elements
    *
    * elements are specified directly in the js array defined in the remove_tokens.js

@@ -69,6 +69,7 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
+  error_log("debug: " . $formName);
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
@@ -87,6 +88,9 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Contact_Form_Task_PDF':
     case 'CRM_Contact_Form_Task_Email':
       CRM_Uimods_MinorChanges::editTokens();
+      break;
+    case 'CRM_Contact_Form_Inline_CommunicationPreferences':
+      CRM_Uimods_MinorChanges::buildFormHook_InlineEdit();
       break;
     case "Civi\Angular\Page\Main":
       break;
@@ -251,6 +255,7 @@ function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$err
     $userClearance = new CRM_Uimods_UserClearance($formName, $form);
     // TODO: do stuff here
     $userClearance->validateFormHook($fields, $files, $errors);
+
   }
 }
 
