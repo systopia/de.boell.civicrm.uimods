@@ -69,7 +69,6 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
-  error_log("debug: " . $formName);
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
