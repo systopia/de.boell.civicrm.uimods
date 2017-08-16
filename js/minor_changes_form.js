@@ -14,7 +14,6 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*/
 
-
 // hide Anredestil in form
 cj("input[name=communication_style_id]").parent().parent().hide();
 
@@ -27,6 +26,9 @@ cj("label[for='postal_greeting_id']").parent().hide();
 // hide preferred mail format
 cj("label[for='preferred_mail_format']").parent().hide();
 
+cj("#addressee_id_label").parent().insertAfter(cj("label[for='addressee_id']").parent());
+cj("#addressee_custom").parent().insertAfter(cj("#addressee").parent());
+
 // input fields
 cj("#email_greeting").parent().hide();
 cj("#postal_greeting").parent().hide();
@@ -35,3 +37,8 @@ cj("#postal_greeting").parent().hide();
 // hide SIC field/label
 cj("label[for='sic_code']").hide();
 cj("#sic_code").hide();
+
+cj(document).ready(function () {
+    // call adjustment once
+    cj("#expand").click();
+});

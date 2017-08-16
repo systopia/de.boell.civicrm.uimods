@@ -28,8 +28,8 @@ function uimods_adjustSummaryView() {
     cj(".crm-contact-communication_style_display").parent().hide();
 
     // hide default greetings from quick edit
-    cj("label[for='email_greeting_id']").parent().parent().hide()
-    cj("label[for='postal_greeting_id']").parent().parent().hide()
+    cj("label[for='email_greeting_id']").parent().parent().hide();
+    cj("label[for='postal_greeting_id']").parent().parent().hide();
 
     // hide 'Kontaktherkunft' edit options
     cj("#records-__CUSTOM-GROUP-ID__ tbody tr").each(function () {
