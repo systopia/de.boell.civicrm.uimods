@@ -33,6 +33,9 @@ cj("#addressee_custom").parent().insertAfter(cj("#addressee").parent());
 cj("#email_greeting").parent().hide();
 cj("#postal_greeting").parent().hide();
 
+// hide Pseudonym & 'gesetzlicher Name' [#5525]
+cj("label[for='legal_name']").parent().hide();
+
 // Organisations
 // hide SIC field/label
 cj("label[for='sic_code']").hide();

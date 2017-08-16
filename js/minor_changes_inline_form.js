@@ -16,3 +16,9 @@
 
 // hide email
 cj("label[for='preferred_mail_format']").parent().parent().hide();
+//hide SIC code
+cj("label[for='sic_code']").parent().parent().hide();
+
+// hide Pseudonym & 'gesetzlicher Name' [#5525]
+cj("label[for='nick_name']").parent().parent().hide();
+cj("label[for='legal_name']").parent().parent().hide();

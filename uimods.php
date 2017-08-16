@@ -88,6 +88,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Contact_Form_Task_Email':
       CRM_Uimods_MinorChanges::editTokens();
       break;
+    case 'CRM_Contact_Form_Inline_ContactInfo':
     case 'CRM_Contact_Form_Inline_CommunicationPreferences':
       CRM_Uimods_MinorChanges::buildFormHook_InlineEdit();
       break;

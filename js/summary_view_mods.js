@@ -27,6 +27,10 @@ function uimods_adjustSummaryView() {
     cj("div.crm-contact-sic_code").parent().hide();
     cj(".crm-contact-communication_style_display").parent().hide();
 
+    // hide Pseudonym & 'gesetzlicher Name' [#5525]
+    cj(".crm-contact-legal_name").parent().hide();
+    cj(".crm-contact-nick_name").parent().hide();
+
     // hide default greetings from quick edit
     cj("label[for='email_greeting_id']").parent().parent().hide();
     cj("label[for='postal_greeting_id']").parent().parent().hide();
