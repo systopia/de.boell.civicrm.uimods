@@ -1,5 +1,8 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
+Version 0.9.8.dev
+==============================================
+- Contact/Organisation View Fixes from feedback (5525)
 
 Version 0.9.6.dev
 ==============================================
