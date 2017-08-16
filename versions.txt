@@ -1,6 +1,10 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
+Version 0.9.5.dev
+==============================================
+- Missing UI Mods on Contact forms and edits (5525)
+
 Version 0.9.3.dev
 ==============================================
 - Fixed relationship handling (5193)
