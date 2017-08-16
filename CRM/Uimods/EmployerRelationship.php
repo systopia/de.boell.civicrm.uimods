@@ -113,15 +113,28 @@ class CRM_Uimods_EmployerRelationship {
 
       } else {
         // to avoid recur loop, set current location type to NULL:
-        $cached_value = self::$_currently_editing_address_location_type;
+        $cached_locationship_type = self::$_currently_editing_address_location_type;
+        $cached_relevant          = self::$_currently_edited_address_relevant;
         self::$_currently_editing_address_location_type = NULL;
+        self::$_currently_edited_address_relevant       = NULL;
+
+        // get contact_id from the unwanted relationship
+        $unwanted_relationship = civicrm_api3('Relationship', 'getsingle', array(
+          'id'     => $objectId,
+          'return' => 'contact_id_a'));
 
         // delete the unwanted relationship
         // error_log("DELETE automatically generated relationship");
         civicrm_api3('Relationship', 'delete', array('id' => $objectId));
 
-        // restore current location type
-        self::$_currently_editing_address_location_type = $cached_value;
+        // call synchronisation
+        if (!empty($unwanted_relationship['contact_id_a'])) {
+          self::synchroniseEmployerRelationships($unwanted_relationship['contact_id_a']);
+        }
+
+        // restore current location type + update
+        self::$_currently_editing_address_location_type = $cached_locationship_type;
+        self::$_currently_edited_address_relevant       = $cached_relevant;
       }
     }
   }
