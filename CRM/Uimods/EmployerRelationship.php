@@ -229,6 +229,7 @@ class CRM_Uimods_EmployerRelationship {
               'is_active'            => '1',
               'start_date'           => date('Y-m-d'));
             // error_log("CREATE RELATIONSHIP " . json_encode($new_relationship_data));
+            $contact_employer_id = $employer_id;
             civicrm_api3('Relationship', 'create', $new_relationship_data);
           }
         } catch (Exception $e) {
