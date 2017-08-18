@@ -20,10 +20,12 @@
  */
 class CRM_Uimods_EmployerRelationship {
 
-  protected static $_currently_editing_contact_id = NULL;
-  protected static $_currently_edited_address_relevant = NULL;
+  protected static $_currently_editing_contact_id            = NULL;
+  protected static $_currently_edited_address_relevant       = NULL;
   protected static $_currently_editing_address_location_type = NULL;
-  protected static $_currently_editing_relationship_new = FALSE;
+  protected static $_currently_editing_relationship_new      = FALSE;
+  protected static $_currently_editing_recursion_stop        = FALSE;
+  protected static $_currently_editing_relationship_relevant = FALSE;
 
   /**
    * Store the information on which address type we're dealing with
@@ -88,8 +90,15 @@ class CRM_Uimods_EmployerRelationship {
    * @see https://projekte.systopia.de/redmine/issues/5193
    */
   public static function handleRelationshipPre($op, $objectId, $params) {
+    self::$_currently_editing_relationship_relevant = self::isRelationshipRelevant($params, $objectId);
+    if (!self::$_currently_editing_relationship_relevant) {
+      return;
+    }
+
     // store the fact if this is new
-    self::$_currently_editing_relationship_new = ($objectId == NULL);
+    if (!self::$_currently_editing_recursion_stop) {
+      self::$_currently_editing_relationship_new = ($objectId == NULL);
+    }
   }
 
   /**
@@ -97,6 +106,18 @@ class CRM_Uimods_EmployerRelationship {
    * @see https://projekte.systopia.de/redmine/issues/5193
    */
   public static function handleRelationshipPost($op, $objectId, $objectRef) {
+    // ignore irrelevant relationships
+    if (!self::$_currently_editing_relationship_relevant) {
+      return;
+    }
+
+    // PREVENT RECURSION
+    if (self::$_currently_editing_recursion_stop) {
+      return;
+    } else {
+      self::$_currently_editing_recursion_stop = TRUE;
+    }
+
     if (self::$_currently_editing_address_location_type && $op == 'create') {
       // only keep automatically created relationships
       //  for location type "GESCHÄFTLICH":
@@ -137,6 +158,8 @@ class CRM_Uimods_EmployerRelationship {
         self::$_currently_edited_address_relevant       = $cached_relevant;
       }
     }
+
+    self::$_currently_editing_recursion_stop = FALSE;
   }
 
   /**
@@ -270,5 +293,23 @@ class CRM_Uimods_EmployerRelationship {
     civicrm_api3('Contact', 'create', array(
       'id'          => $contact_id,
       'employer_id' => $contact_employer_id));
+  }
+
+  /**
+   * Find out whether this relationship is relevant,
+   * i.e. is it the employer relationship
+   */
+  protected static function isRelationshipRelevant($relationship_data, $relationship_id) {
+    if (!empty($relationship_data['relationship_type_id'])) {
+      return $relationship_data['relationship_type_id'] == CRM_Uimods_Config::getEmployerRelationshipID();
+    } elseif (!empty($relationship_id)) {
+      // load the relationship
+      $relationship = civicrm_api3('Relationship', 'getsingle', array(
+        'id'     => $relationship_id,
+        'return' => 'relationship_type_id'));
+      return $relationship['relationship_type_id'] == CRM_Uimods_Config::getEmployerRelationshipID();
+    } else {
+      return FALSE;
+    }
   }
 }
