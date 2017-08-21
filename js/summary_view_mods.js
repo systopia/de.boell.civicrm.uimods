@@ -31,6 +31,9 @@ function uimods_adjustSummaryView() {
     cj(".crm-contact-legal_name").parent().hide();
     cj(".crm-contact-nick_name").parent().hide();
 
+    // fix employer relationship
+    cj("div.crm-contact-current_employer").html(CRM.vars['de.boell.civicrm.uimods'].employer_html);
+
     // hide default greetings from quick edit
     cj("label[for='email_greeting_id']").parent().parent().hide();
     cj("label[for='postal_greeting_id']").parent().parent().hide();

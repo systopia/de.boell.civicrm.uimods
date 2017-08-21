@@ -28,6 +28,9 @@ class CRM_Uimods_MinorChanges {
    */
   public static function pageRunHook(&$page) {
     // add general UI mods
+    CRM_Core_Resources::singleton()->addVars('de.boell.civicrm.uimods', array(
+      'employer_html' => CRM_Uimods_EmployerRelationship::getCurrentEmployerHTML($page->get('cid'))
+    ));
     $script2 = file_get_contents(__DIR__ . '/../../js/summary_view_mods.js');
     $custom_group_id = self::getCustomGroupID();
     $script2 = str_replace('__CUSTOM-GROUP-ID__', $custom_group_id, $script2);

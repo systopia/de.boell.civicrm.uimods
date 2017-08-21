@@ -23,6 +23,9 @@ cj("label[for='email_greeting_id']").closest("tr").find("td:last-child").hide()
 cj("label[for='email_greeting_id']").parent().hide();
 cj("label[for='postal_greeting_id']").parent().hide();
 
+// hide employer
+cj("label[for='employer_id']").parent().hide();
+
 // hide preferred mail format
 cj("label[for='preferred_mail_format']").parent().hide();
 

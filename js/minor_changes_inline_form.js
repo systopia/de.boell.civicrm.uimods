@@ -22,3 +22,6 @@ cj("label[for='sic_code']").parent().parent().hide();
 // hide Pseudonym & 'gesetzlicher Name' [#5525]
 cj("label[for='nick_name']").parent().parent().hide();
 cj("label[for='legal_name']").parent().parent().hide();
+
+// hide employer
+cj("label[for='employer_id']").parent().parent().hide();

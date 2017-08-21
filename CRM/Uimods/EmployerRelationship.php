@@ -254,10 +254,45 @@ class CRM_Uimods_EmployerRelationship {
       'employer_id' => $contact_employer_id));
   }
 
+  /**
+   * Generate the HTML content for the "employer" field
+   */
+  public static function getCurrentEmployerHTML($contact_id) {
+    if (empty($contact_id)) return '';
 
+    // load all active relationships
+    $relationships = civicrm_api3('Relationship', 'get', array(
+      'contact_id_a'         => $contact_id,
+      'relationship_type_id' => CRM_Uimods_Config::getEmployerRelationshipID(),
+      'return'               => 'contact_id_b',
+      'is_active'            => 1,
+      'sequential'           => 1,
+      'option.limit'         => 0))['values'];
 
+    // load related contacts' display name
+    $contact_list = array();
+    foreach ($relationships as $realtionship) {
+      $contact_list[] = $realtionship['contact_id_b'];
+    }
+    if (!empty($contact_list)) {
+      $contacts = civicrm_api3('Contact', 'get', array(
+        'id'           => array('IN' => $contact_list),
+        'return'       => 'display_name',
+        'sequential'   => 0,
+        'option.limit' => 0))['values'];
 
+      $employers = array();
+      foreach ($relationships as $relationship) {
+        $link = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=19' . $relationship['contact_id_b'], true);
+        $name = $contacts[$relationship['contact_id_b']]['display_name'];
+        $employers[] = "<a href=\"{$link}\" title=\"Aktuelle/n Arbeitgeber/in anzeigen\">{$name}</a>";
+      }
 
+      return implode(', ', $employers);
+    } else {
+      return '';
+    }
+  }
 
 
 
