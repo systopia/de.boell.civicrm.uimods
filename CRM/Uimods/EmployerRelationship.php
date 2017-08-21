@@ -20,15 +20,7 @@
  */
 class CRM_Uimods_EmployerRelationship {
   protected static $_currently_edited_address_relevant       = FALSE;
-  // protected static $_currently_editing_relationship_relevant = FALSE;
   protected static $_currently_editing_contact_id            = NULL;
-  // protected static $_currently_editing_recursion_stop        = FALSE;
-
-  // TODO: remove
-  // protected static $_currently_edited_address_relevant       = NULL;
-  // protected static $_currently_editing_address_location_type = NULL;
-  // protected static $_currently_editing_relationship_new      = FALSE;
-  // protected static $_currently_editing_relationship_relevant = FALSE;
 
   /**
    * Find out wheter this address change is relevant
@@ -96,8 +88,7 @@ class CRM_Uimods_EmployerRelationship {
    * @see https://projekte.systopia.de/redmine/issues/5193
    */
   public static function handleRelationshipPre($op, $objectId, $params) {
-    return;
-    // self::$_currently_editing_relationship_relevant = self::isRelationshipRelevant($params, $objectId);
+    // nothing to do
   }
 
   /**
@@ -105,63 +96,9 @@ class CRM_Uimods_EmployerRelationship {
    * @see https://projekte.systopia.de/redmine/issues/5193
    */
   public static function handleRelationshipPost($op, $objectId, $objectRef) {
-    return;
-    // // ignore irrelevant relationships
-    // if (!self::$_currently_editing_relationship_relevant) {
-    //   return;
-    // }
-
-    // // PREVENT RECURSION
-    // if (self::$_currently_editing_recursion_stop) {
-    //   return;
-    // } else {
-    //   self::$_currently_editing_recursion_stop = TRUE;
-    // }
-
-
-
-    // if (self::$_currently_editing_address_location_type && $op == 'create') {
-    //   // only keep automatically created relationships
-    //   //  for location type "GESCHÄFTLICH":
-    //   if (self::$_currently_editing_address_location_type == CRM_Uimods_Config::getBusinessLocationType()) {
-    //     // avoid recursion:
-    //     self::$_currently_editing_address_location_type = NULL;
-
-    //     // set start date (which isn't set by the default function)
-    //     if (self::$_currently_editing_relationship_new) {
-    //       civicrm_api3('Relationship', 'create', array(
-    //         'id'         => $objectId,
-    //         'start_date' => date('Y-m-d')));
-    //     }
-
-    //   } else {
-    //     // to avoid recur loop, set current location type to NULL:
-    //     $cached_locationship_type = self::$_currently_editing_address_location_type;
-    //     $cached_relevant          = self::$_currently_edited_address_relevant;
-    //     self::$_currently_editing_address_location_type = NULL;
-    //     self::$_currently_edited_address_relevant       = NULL;
-
-    //     // get contact_id from the unwanted relationship
-    //     $unwanted_relationship = civicrm_api3('Relationship', 'getsingle', array(
-    //       'id'     => $objectId,
-    //       'return' => 'contact_id_a'));
-
-    //     // delete the unwanted relationship
-    //     // error_log("DELETE automatically generated relationship");
-    //     civicrm_api3('Relationship', 'delete', array('id' => $objectId));
-
-    //     // call synchronisation
-    //     if (!empty($unwanted_relationship['contact_id_a'])) {
-    //       self::synchroniseEmployerRelationships($unwanted_relationship['contact_id_a']);
-    //     }
-
-    //     // restore current location type + update
-    //     self::$_currently_editing_address_location_type = $cached_locationship_type;
-    //     self::$_currently_edited_address_relevant       = $cached_relevant;
-    //   }
-    // }
-
-    // self::$_currently_editing_recursion_stop = FALSE;
+    if ( $op != 'delete' && $objectId && $objectRef->relationship_type_id == CRM_Uimods_Config::getLegacyEmployerRelationshipID()) {
+      civicrm_api3('Relationship', 'delete', array('id' => $objectId));
+    }
   }
 
   /**
@@ -176,7 +113,15 @@ class CRM_Uimods_EmployerRelationship {
     $relationships_changed = FALSE;
 
     // first: consolidate relationships (i.e. system has created multiple)
-    $relationships = self::consolidateRelationships($contact_id);
+    // $relationships = self::consolidateRelationships($contact_id);
+
+    // load relationships
+    $relationships = civicrm_api3('Relationship', 'get', array(
+      'contact_id_a'         => $contact_id,
+      'relationship_type_id' => CRM_Uimods_Config::getEmployerRelationshipID(),
+      'return'               => 'contact_id_b,is_active,end_date,start_date',
+      'sequential'           => 0,
+      'option.limit'         => 0))['values'];
 
     // load all addresses
     $addresses = civicrm_api3('Address', 'get', array(
@@ -236,8 +181,9 @@ class CRM_Uimods_EmployerRelationship {
         // we found one...
         // error_log("ADDRESS MATCHED");
         unset($relationships[$connected_relationship['id']]);
+
       } else {
-        // we should create a new one
+        // we need to make sure there is an active one
         try {
           $today = date('Y-m-d');
           $relationships_changed = TRUE;
@@ -248,29 +194,32 @@ class CRM_Uimods_EmployerRelationship {
             if ($relationship['contact_id_b'] == $employer_id) {
               $start_date = empty($relationship['start_date']) ? '0000-00-00' : date('Y-m-d', strtotime($relationship['start_date']));
               $end_date   = empty($relationship['end_date'])   ? '9999-99-99' : date('Y-m-d', strtotime($relationship['end_date']));
-              if ($start_date <= $now && $end_date >= $now) {
+              // error_log("[{$relationship['id']}]: $start_date - $end_date");
+              if ($start_date <= $today && $end_date >= $today) {
                 // we found a match
+                // error_log("MATCH!");
                 $existing = $relationship;
                 break;
               }
             }
           }
 
-          if ($existing['id']) {
+          if (!empty($existing['id'])) {
             // there is one: simply set to active again
             // error_log("ACTIVATE RELATIONSHIP " . $existing['id']);
             civicrm_api3('Relationship', 'create', array(
               'id'        => $existing['id'],
               'is_active' => '1',
               'end_date'  => ''));
+            $contact_employer_id = $employer_id;
 
           } else {
             $new_relationship_data = array(
-              'contact_id_a' => $contact_id,
-              'contact_id_b' => $employer_id,
+              'contact_id_a'         => $contact_id,
+              'contact_id_b'         => $employer_id,
               'relationship_type_id' => CRM_Uimods_Config::getEmployerRelationshipID(),
               'is_active'            => '1',
-              'start_date'           => date('Y-m-d'));
+              'start_date'           => date('YmdHis'));
             // error_log("CREATE RELATIONSHIP " . json_encode($new_relationship_data));
             $contact_employer_id = $employer_id;
             civicrm_api3('Relationship', 'create', $new_relationship_data);
@@ -292,28 +241,35 @@ class CRM_Uimods_EmployerRelationship {
         civicrm_api3('Relationship', 'create', array(
           'id'        => $relationship['id'],
           'is_active' => '0',
-          'end_date'  => date('Y-m-d')));
+          'end_date'  => date('YmdHis')));
       } catch (Exception $e) {
         error_log("de.boell.civicrm.uimods: Couldn't end relationship - " . $e->getMessage());
       }
     }
 
-    // if we changed stuff -> consolidate again
-    if ($relationships_changed) {
-      self::consolidateRelationships($contact_id);
-    }
-    // // finally: set/remove employer_id
-    // // error_log("SET $contact_id employer to $contact_employer_id");
-    // civicrm_api3('Contact', 'create', array(
-    //   'id'          => $contact_id,
-    //   'employer_id' => $contact_employer_id));
+    // finally: set/remove employer_id
+    // error_log("SET $contact_id employer to $contact_employer_id");
+    civicrm_api3('Contact', 'create', array(
+      'id'          => $contact_id,
+      'employer_id' => $contact_employer_id));
   }
+
+
+
+
+
+
+
+
+
+
 
   /**
    * make sure there are no duplicate relationships,
    *  e.g. created by CiviCRM's brilliant address sharing algorithm
    *
    * @return consolidated relationships
+   * @deprecated
    */
   protected static function consolidateRelationships($contact_id) {
     // load all relationships
@@ -353,26 +309,18 @@ class CRM_Uimods_EmployerRelationship {
 
   /**
    * TODO
+   * @deprecated
    */
   protected static function consolidateRelationshipTuple($relationships) {
-    TODO
-  }
+    if (count($relationships) > 1) {
+      error_log("MULTIPLE RELATIONSHIP DETECTED!");
+      foreach ($relationships as $relationship) {
+        error_log(json_encode($relationship));
+      }
+    }
 
-  // /**
-  //  * Find out whether this relationship is relevant,
-  //  * i.e. is it the employer relationship
-  //  */
-  // protected static function isRelationshipRelevant($relationship_data, $relationship_id) {
-  //   if (!empty($relationship_data['relationship_type_id'])) {
-  //     return $relationship_data['relationship_type_id'] == CRM_Uimods_Config::getEmployerRelationshipID();
-  //   } elseif (!empty($relationship_id)) {
-  //     // load the relationship
-  //     $relationship = civicrm_api3('Relationship', 'getsingle', array(
-  //       'id'     => $relationship_id,
-  //       'return' => 'relationship_type_id'));
-  //     return $relationship['relationship_type_id'] == CRM_Uimods_Config::getEmployerRelationshipID();
-  //   } else {
-  //     return FALSE;
-  //   }
-  // }
+    // TODO: implement?
+
+    return $relationships;
+  }
 }

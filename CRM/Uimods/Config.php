@@ -21,6 +21,7 @@ class CRM_Uimods_Config {
 
   private static $orgname_group_id = NULL;
   private static $orgname_fields   = NULL;
+  private static $custom_employee_relation_id = NULL;
 
   /**
    * get the "geschäftlich" location type id
@@ -33,6 +34,19 @@ class CRM_Uimods_Config {
    * get the emplyer relationship type id
    */
   public static function getEmployerRelationshipID() {
+    if (self::$custom_employee_relation_id === NULL) {
+      $relationship_type = civicrm_api3('RelationshipType', 'getsingle', array(
+        'name_a_b' => 'Mitarbeiter_von',
+        'return'   => 'id'));
+      self::$custom_employee_relation_id = $relationship_type['id'];
+    }
+    return self::$custom_employee_relation_id;
+  }
+
+  /**
+   * get the legacy employer relationship type id
+   */
+  public static function getLegacyEmployerRelationshipID() {
     return 5;
   }
 
