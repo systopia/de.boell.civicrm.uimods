@@ -1,5 +1,10 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
+
+Version 1.0.beta1
+==============================================
+- Finisehd relationship handling (5193)
+
 Version 0.9.8.dev
 ==============================================
 - Contact/Organisation View Fixes from feedback (5525)
