@@ -115,6 +115,12 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = arra
   CRM_Uimods_AddressTokens::tokenValues($values, $cids, $job, $tokens, $context);
 }
 
+/**
+ * Hook implementation: API Wrapper
+ */
+function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  CRM_Uimods_UserClearanceApiWrapper::registerWrappers($wrappers, $apiRequest);
+}
 
 /**
  * Implements hook_civicrm_config().
