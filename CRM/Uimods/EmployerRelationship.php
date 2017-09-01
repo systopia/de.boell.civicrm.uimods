@@ -283,7 +283,7 @@ class CRM_Uimods_EmployerRelationship {
 
       $employers = array();
       foreach ($relationships as $relationship) {
-        $link = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=19' . $relationship['contact_id_b'], true);
+        $link = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $relationship['contact_id_b'], true);
         $name = $contacts[$relationship['contact_id_b']]['display_name'];
         $employers[] = "<a href=\"{$link}\" title=\"Aktuelle/n Arbeitgeber/in anzeigen\">{$name}</a>";
       }
