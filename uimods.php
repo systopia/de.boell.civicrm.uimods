@@ -105,6 +105,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
 function uimods_civicrm_tokens( &$tokens ) {
   CRM_Uimods_NameTokens::addTokens($tokens);
   CRM_Uimods_AddressTokens::addTokens($tokens);
+  CRM_Uimods_OtherTokens::addTokens($tokens);
 }
 
 /**
@@ -113,6 +114,7 @@ function uimods_civicrm_tokens( &$tokens ) {
 function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
   CRM_Uimods_NameTokens::tokenValues($values, $cids, $job, $tokens, $context);
   CRM_Uimods_AddressTokens::tokenValues($values, $cids, $job, $tokens, $context);
+  CRM_Uimods_OtherTokens::tokenValues($values, $cids, $job, $tokens, $context);
 }
 
 
