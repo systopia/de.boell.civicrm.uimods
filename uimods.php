@@ -92,6 +92,14 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Contact_Form_Inline_CommunicationPreferences':
       CRM_Uimods_MinorChanges::buildFormHook_InlineEdit();
       break;
+    case 'CRM_Contact_Form_Task_AddToGroup':
+      if (!CRM_Core_Permission::check('edit groups')) {
+        CRM_Core_Region::instance('page-footer')->add(array(
+          'script' => file_get_contents(__DIR__ . '/js/task_addtogroup_mods.js'),
+          ));
+      }
+      break;
+
     case "Civi\Angular\Page\Main":
       break;
     default:
@@ -241,6 +249,22 @@ function uimods_civicrm_angularModules(&$angularModules) {
  */
 function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _uimods_civix_civicrm_alterSettingsFolders($metaDataFolders);
+}
+
+
+/**
+ * Implements hook_civicrm_searchTasks().
+ *
+ * @link https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_searchTasks
+ */
+function uimods_civicrm_searchTasks( $objectType, &$tasks ) {
+  if (!CRM_Core_Permission::check('edit groups')) {
+    foreach (array_keys($tasks) as $key) {
+      if ($tasks[$key]['class'] == 'CRM_Contact_Form_Task_SaveSearch') {
+        unset($tasks[$key]);
+      }
+    }
+  }
 }
 
 /**
