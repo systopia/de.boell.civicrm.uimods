@@ -119,11 +119,15 @@ class CRM_Uimods_UserClearance {
     }
     $category = CRM_Utils_Array::value( 'user_clearance_category', $fields );
     if (!$category || $category == '0') {
-      $errors['user_clearance_category'] = ' Kategorie ist ein Pflichtfeld';
+      $errors['user_clearance_category'] = 'Kategorie ist ein Pflichtfeld';
     }
     $source = CRM_Utils_Array::value( 'user_clearance_source', $fields );
     if (!$source || $source == '0') {
       $errors['user_clearance_source'] = ts( 'Quelle ist ein Pflichtfeld' );
+    }
+    $contact_origin = CRM_Utils_Array::value( 'user_clearance_note', $fields );
+    if (strlen($contact_origin) > 60) {
+      $errors['user_clearance_note'] = ts( 'Die Kontakt Herkunft darf nur 60 Zeichen lang sein.' );
     }
   }
 
