@@ -44,6 +44,30 @@ class CRM_Uimods_OrganisationName {
   }
 
   /**
+   * Adds additional fields for Organisation Name 1 + 2 to the quick edit form
+   * This will be called for the CRM_Profile_Form_Edit form hook
+   * @param $formName
+   * @param $form
+   */
+  public static function buildFormHook_quickOrganisationCreate($formName, &$form) {
+    $form_fields = $form->getVar('_fields');
+    if (empty($form_fields)) {
+      // nothing to do here. We only watch out for organization quick create
+      return;
+    }
+    if (!array_key_exists ('organization_name', $form_fields)) {
+      // nothing to do here. We only watch out for organization quick create
+      return;
+    }
+    $script = file_get_contents(__DIR__ . '/../../js/organization_create_quick.js');
+    $script = str_replace('OGRNAME_ROW1', CRM_Uimods_Config::getOrgnameField(1), $script);
+    $script = str_replace('OGRNAME_ROW2', CRM_Uimods_Config::getOrgnameField(2), $script);
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $script,
+    ));
+  }
+
+  /**
    * Adjust Contact Summary View
    */
   public static function pageRunHook($page) {
