@@ -20,7 +20,7 @@ class CRM_Uimods_MailingPermission {
    * Specify the new setting
    */
   public static function specify(&$permissions) {
-    $permissions['mailing approval'] = $prefix . ts('CiviMail (Massenmailings): Freigabe');
+    $permissions['mailing approval'] = ts('CiviMail (Massenmailings): Freigabe');
   }
 
   /**
