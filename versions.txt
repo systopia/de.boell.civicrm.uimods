@@ -1,6 +1,10 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
+Version 1.2.alpha1
+==============================================
+- Introduced 'Mailing Approval' permission (5218)
+
 Version 1.1.beta1
 ==============================================
 - Record user clearance on API calls (5581)

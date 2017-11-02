@@ -24,6 +24,8 @@ function uimods_civicrm_pre($op, $objectName, $id, &$params) {
     CRM_Uimods_EmployerRelationship::handleAddressPre($op, $id, $params);
   } elseif ($objectName == 'Relationship') {
     CRM_Uimods_EmployerRelationship::handleRelationshipPre($op, $id, $params);
+  } elseif ($objectName == 'Mailing') {
+    CRM_Uimods_MailingPermission::check($op, $objectName, $id, $params);
   }
 }
 
@@ -48,6 +50,13 @@ function uimods_civicrm_custom($op, $groupID, $entityID, &$params) {
 }
 
 /**
+ * Hook implementation: define permissions
+ */
+function uimods_civicrm_permission(&$permissions) {
+  CRM_Uimods_MailingPermission::specify($permissions);
+}
+
+/**
  * Hook implementation: Inject JS code adjusting summary view
  */
 function uimods_civicrm_pageRun(&$page) {
@@ -69,7 +78,6 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
-  error_log("debug form: {$formName}");
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
