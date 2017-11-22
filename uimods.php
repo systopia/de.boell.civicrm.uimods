@@ -79,19 +79,6 @@ function uimods_civicrm_pageRun(&$page) {
  */
 function uimods_civicrm_buildForm($formName, &$form) {
   switch ($formName) {
-    case 'CRM_Contact_Form_Contact':
-      CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
-      CRM_Uimods_MinorChanges::buildFormHook($formName, $form);
-
-      require_once 'CRM/Uimods/UserClearance.php';
-      if (!empty($form->_contactId)) {
-        $userClearance = new CRM_Uimods_UserClearance($formName, $form, $form->_contactId);
-      } else {
-        $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-      }
-      $userClearance->buildFormHook();
-
-      break;
     // TODO: more forms to come here, tokens are everywhere!
     case 'CRM_Contact_Form_Task_PDF':
     case 'CRM_Contact_Form_Task_Email':
@@ -141,7 +128,23 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = arra
  * Hook implementation: API Wrapper
  */
 function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
-  CRM_Uimods_UserClearanceApiWrapper::registerWrappers($wrappers, $apiRequest);
+  if (class_exists('CRM_Gdprx_ConsentApiWrapper')) {
+    if ($apiRequest['entity'] == 'RemoteRegistration' && $apiRequest['action'] == 'register') {
+      $wrappers[] = new CRM_Gdprx_ConsentApiWrapper(
+        'RemoteRegistration',
+        'register',
+        'Double-opt-in',
+        'Anmeldung Veranstaltung',
+        "Veranstaltung {$result['event_id']}");
+
+    } elseif ($apiRequest['entity'] == 'RemoteGroup' && $apiRequest['action'] == 'subscribe') {
+      $wrappers[] = new CRM_Gdprx_ConsentApiWrapper(
+        'RemoteGroup',
+        'subscribe',
+        'Double-opt-in',
+        'Anmeldung Gruppe');
+    }
+  }
 }
 
 /**
@@ -282,38 +285,5 @@ function uimods_civicrm_searchTasks( $objectType, &$tasks ) {
         unset($tasks[$key]);
       }
     }
-  }
-}
-
-/**
- * Implements hook_civicrm_validateForm()
- * @param $formName
- * @param $fields
- * @param $files
- * @param $form
- * @param $errors
- */
-function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  if ($formName == 'CRM_Contact_Form_Contact') {
-    require_once 'CRM/Uimods/UserClearance.php';
-    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-    // TODO: do stuff here
-    $userClearance->validateFormHook($fields, $files, $errors);
-
-  }
-}
-
-/**
- * Implements hook_civicrm_postProcess()
- *
- * @param string $formName
- * @param CRM_Core_Form $form
- */
-function uimods_civicrm_postProcess($formName, &$form) {
-  if ($formName == 'CRM_Contact_Form_Contact') {
-    require_once 'CRM/Uimods/UserClearance.php';
-    $userClearance = new CRM_Uimods_UserClearance($formName, $form);
-    // TODO: do stuff here
-    $userClearance->postProcessHook();
   }
 }
