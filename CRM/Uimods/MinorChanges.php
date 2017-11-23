@@ -81,9 +81,9 @@ class CRM_Uimods_MinorChanges {
    * get CustomGroup ID of the orgnisation_names
    */
   public static function getCustomGroupID() {
-      $group = civicrm_api3('CustomGroup', 'getsingle', array(
+      $group = civicrm_api3('CustomGroup', 'get', array(
         'sequential' => 1,
-        'name' => "nutzungsberechtigung",
+        'name'       => "consent",
       ));
     return $group['id'];
   }
