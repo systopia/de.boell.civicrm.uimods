@@ -133,16 +133,20 @@ function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
       $wrappers[] = new CRM_Gdprx_ConsentApiWrapper(
         'RemoteRegistration',
         'register',
-        'Double-opt-in',
         'Anmeldung Veranstaltung',
-        "Veranstaltung {$result['event_id']}");
+        'Double-opt-in',
+        'request::consent_note');
 
     } elseif ($apiRequest['entity'] == 'RemoteGroup' && $apiRequest['action'] == 'subscribe') {
       $wrappers[] = new CRM_Gdprx_ConsentApiWrapper(
         'RemoteGroup',
         'subscribe',
+        'Anmeldung Gruppe',
         'Double-opt-in',
-        'Anmeldung Gruppe');
+        'request::consent_note',
+        'now',
+        'reply::id'
+      );
     }
   }
 }
