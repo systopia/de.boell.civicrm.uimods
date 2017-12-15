@@ -222,9 +222,9 @@ class CRM_Uimods_AddressTokens {
         ));
       foreach ($contactId_2_masterContactId as $contact_id => $master_contact_id) {
         $master_contact = $master_contactquery['values'][$master_contact_id];
-        $contactId_2_address[$contact_id]['master']   = $master_contact['display_name'];
-        $contactId_2_address[$contact_id]['master_1'] = $master_contact[$orgname_line_1];
-        $contactId_2_address[$contact_id]['master_2'] = $master_contact[$orgname_line_2];
+        $contactId_2_address[$contact_id]['master']   = CRM_Utils_Array::value('display_name',  $master_contact, '');
+        $contactId_2_address[$contact_id]['master_1'] = CRM_Utils_Array::value($orgname_line_1, $master_contact, '');
+        $contactId_2_address[$contact_id]['master_2'] = CRM_Utils_Array::value($orgname_line_2, $master_contact, '');
       }
     }
 
