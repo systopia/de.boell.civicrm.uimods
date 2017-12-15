@@ -104,6 +104,10 @@ class CRM_Uimods_AddressTokens {
         if (self::includesMasterTokens($token_list) || self::includesIntlToken($token_list)) {
           $addresses = self::loadAddresses($contact_ids, NULL, TRUE);
           foreach ($contact_ids as $contact_id) {
+            if (!isset($addresses[$contact_id])) {
+              // this contact has no address
+              continue;
+            }
             $address = $addresses[$contact_id];
             foreach ($token_list as $token) {
               switch ($token) {
@@ -118,15 +122,15 @@ class CRM_Uimods_AddressTokens {
                   continue;
 
                 case 'address_master':
-                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master'];
+                  $values[$contact_id]["{$token_class}.{$token}"] = CRM_Utils_Array::value('master',  $address, '');
                   continue;
 
                 case 'address_master_1':
-                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master_1'];
+                  $values[$contact_id]["{$token_class}.{$token}"] = CRM_Utils_Array::value('master_1',  $address, '');
                   continue;
 
                 case 'address_master_2':
-                  $values[$contact_id]["{$token_class}.{$token}"] = $address['master_2'];
+                  $values[$contact_id]["{$token_class}.{$token}"] = CRM_Utils_Array::value('master_2',  $address, '');
                   continue;
 
                 default:
