@@ -287,10 +287,10 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailParams/
  */
 function uimods_civicrm_alterMailParams(&$params, $context) {
-  if ($context == 'civimail') {
-    // strip email 'toName', see HBS-6300
+  // strip email 'toName' in mass mailings (see HBS-6300)
+  if ($context == 'civimail' || $context == 'flexmailer') {
     if (isset($params['toName'])) {
-      unset($params['toName']);
+      $params['toName'] = '';
     }
   }
 }
