@@ -296,3 +296,12 @@ function uimods_civicrm_searchTasks( $objectType, &$tasks ) {
     }
   }
 }
+
+/**
+ * Implements hook_civicrm_alterMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_searchTasks
+ */
+function uimods_civicrm_alterMenu(&$items) {
+  CRM_Uimods_AdjustPagePermissions::handleAlterMenu($items);
+}
