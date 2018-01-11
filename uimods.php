@@ -295,6 +295,18 @@ function uimods_civicrm_alterMailParams(&$params, $context) {
   }
 }
 
+
+/**
+ * Implements hook_civicrm_unsubscribeGroups().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_unsubscribeGroups/
+ */
+function uimods_civicrm_unsubscribeGroups($op, $mailingId, $contactId, &$groups, &$baseGroups) {
+  if ($op == 'unsubscribe') {
+    CRM_Uimods_MailingUnsubscribe::handleUnsubscribeGroups($mailingId, $contactId, $groups, $baseGroups);
+  }
+}
+
 /**
  * Implements hook_civicrm_searchTasks().
  *
