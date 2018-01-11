@@ -281,6 +281,19 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _uimods_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+/**
+ * Implements hook_civicrm_alterMailParams().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailParams/
+ */
+function uimods_civicrm_alterMailParams(&$params, $context) {
+  // strip email 'toName' in mass mailings (see HBS-6300)
+  if ($context == 'civimail' || $context == 'flexmailer') {
+    if (isset($params['toName'])) {
+      $params['toName'] = '';
+    }
+  }
+}
 
 /**
  * Implements hook_civicrm_searchTasks().

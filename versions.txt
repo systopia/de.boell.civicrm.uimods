@@ -1,6 +1,10 @@
 Heinrich Boell Stiftung CiviCRM-Modifikationen
 ==============================================
 
+Version 1.3.3
+==============================================
+- Strip toName in mass mailings (HBS-6300)
+
 Version 1.3.2
 ==============================================
 - Fix Tokens (HBS-6268)
