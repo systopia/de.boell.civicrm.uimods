@@ -25,15 +25,13 @@ class CRM_Uimods_AdjustPagePermissions {
   public static function handleAlterMenu(&$items) {
     // Mailing stats, see HBS-5925
     if (isset($items['civicrm/mailing/report'])) {
-      $items['civicrm/mailing/report/event']['access_arguments'] = array(
-        array('access Report Criteria', 'administer CiviCRM'),
-        "or");
+      $items['civicrm/mailing/report']['access_arguments'] =
+        array(array('access Report Criteria', 'administer CiviCRM'), "or");
     }
     // Mailing stats, see HBS-5925
     if (isset($items['civicrm/mailing/report/event'])) {
-      $items['civicrm/mailing/report/event']['access_arguments'] = array(
-        array('access Report Criteria', 'administer CiviCRM'),
-        "or");
+      $items['civicrm/mailing/report/event']['access_arguments'] =
+        array(array('access Report Criteria', 'administer CiviCRM'), "or");
     }
   }
 
