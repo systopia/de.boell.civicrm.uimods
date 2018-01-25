@@ -3,7 +3,6 @@
 | HBS UI Modififications                                 |
 | Copyright (C) 2017 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
-| Author: P. Batroff (batroff@systopia.de)               |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
@@ -100,10 +99,6 @@ function uimods_civicrm_buildForm($formName, &$form) {
           'script' => file_get_contents(__DIR__ . '/js/task_addtogroup_mods.js'),
           ));
       }
-      break;
-    case 'CRM_Event_Form_Participant':
-      require_once 'CRM/Uimods/ParticipantForm.php';
-      CRM_Uimods_ParticipantForm::buildFormHook($formName, $form);
       break;
     // "Quick contact add Oraganisation (5680)
     case "CRM_Profile_Form_Edit":
