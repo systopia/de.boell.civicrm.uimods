@@ -3,6 +3,7 @@
 | HBS UI Modififications                                 |
 | Copyright (C) 2017 SYSTOPIA                            |
 | Author: B. Endres (endres@systopia.de)                 |
+| Author: P. Batroff (batroff@systopia.de)               |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
@@ -99,6 +100,10 @@ function uimods_civicrm_buildForm($formName, &$form) {
           'script' => file_get_contents(__DIR__ . '/js/task_addtogroup_mods.js'),
           ));
       }
+      break;
+    case 'CRM_Event_Form_Participant':
+      require_once 'CRM/Uimods/ParticipantForm.php';
+      CRM_Uimods_ParticipantForm::buildFormHook($formName, $form);
       break;
     // "Quick contact add Oraganisation (5680)
     case "CRM_Profile_Form_Edit":
@@ -295,6 +300,18 @@ function uimods_civicrm_alterMailParams(&$params, $context) {
   }
 }
 
+
+/**
+ * Implements hook_civicrm_unsubscribeGroups().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_unsubscribeGroups/
+ */
+function uimods_civicrm_unsubscribeGroups($op, $mailingId, $contactId, &$groups, &$baseGroups) {
+  if ($op == 'unsubscribe') {
+    CRM_Uimods_MailingUnsubscribe::handleUnsubscribeGroups($mailingId, $contactId, $groups, $baseGroups);
+  }
+}
+
 /**
  * Implements hook_civicrm_searchTasks().
  *
@@ -308,4 +325,13 @@ function uimods_civicrm_searchTasks( $objectType, &$tasks ) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_civicrm_alterMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/master/hooks/hook_civicrm_searchTasks
+ */
+function uimods_civicrm_alterMenu(&$items) {
+  CRM_Uimods_AdjustPagePermissions::handleAlterMenu($items);
 }
