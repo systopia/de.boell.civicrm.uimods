@@ -62,6 +62,7 @@ function uimods_civicrm_permission(&$permissions) {
  */
 function uimods_civicrm_pageRun(&$page) {
   $page_name = $page->getVar('_name');
+  error_log("DEBUG_PHIL_PAGE: {$page_name}");
   switch ($page_name) {
     case 'CRM_Contact_Page_View_Summary':
       CRM_Uimods_OrganisationName::pageRunHook($page);
@@ -79,6 +80,7 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
+  error_log("DEBUG_PHIL_FORM: {$formName}");
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
@@ -111,6 +113,8 @@ function uimods_civicrm_buildForm($formName, &$form) {
       break;
     case "Civi\Angular\Page\Main":
       break;
+    case 'CRM_Admin_Form_ScheduleReminders':
+      CRM_Uimods_AdminScheduleReminders::createUserWarning();
     default:
       break;
   }
