@@ -32,7 +32,7 @@ class CRM_Uimods_AdminScheduleReminders{
     CRM_Core_Session::setStatus(
       "Wenn der Reminder für heute konfiguriert ist, dann wird er innerhalb der nächsten 10 Minuten automatisch an alle Teilnehmer verschickt. Bitte den Inhalt der Email gegenchecken.",
       ts("Event Reminder Warning"),
-      "info",
+      "error",
       array('unique' => true, 'expires' => 0));
   }
 }
