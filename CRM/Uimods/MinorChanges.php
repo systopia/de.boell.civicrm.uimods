@@ -77,6 +77,14 @@ class CRM_Uimods_MinorChanges {
     ));
   }
 
+  public static function build_search_form_hook() {
+    $script = file_get_contents(__DIR__ . '/../../js/minor_changes_ammend_search_form.js');
+
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $script,
+    ));
+  }
+
   /**
    * get CustomGroup ID of the orgnisation_names
    */

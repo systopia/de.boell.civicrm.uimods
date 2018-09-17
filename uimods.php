@@ -62,7 +62,7 @@ function uimods_civicrm_permission(&$permissions) {
  */
 function uimods_civicrm_pageRun(&$page) {
   $page_name = $page->getVar('_name');
-  error_log("DEBUG_PHIL_PAGE: {$page_name}");
+  error_log("PBADEBUG PAGE: {$page_name}");
   switch ($page_name) {
     case 'CRM_Contact_Page_View_Summary':
       CRM_Uimods_OrganisationName::pageRunHook($page);
@@ -80,7 +80,6 @@ function uimods_civicrm_pageRun(&$page) {
  * @param $form
  */
 function uimods_civicrm_buildForm($formName, &$form) {
-  error_log("DEBUG_PHIL_FORM: {$formName}");
   switch ($formName) {
     case 'CRM_Contact_Form_Contact':
       CRM_Uimods_OrganisationName::buildFormHook($formName, $form);
@@ -110,6 +109,9 @@ function uimods_civicrm_buildForm($formName, &$form) {
     // "Quick contact add Oraganisation (5680)
     case "CRM_Profile_Form_Edit":
       CRM_Uimods_OrganisationName::buildFormHook_quickOrganisationCreate($formName, $form);
+      break;
+    case "CRM_Event_Form_Search":
+      CRM_Uimods_MinorChanges::build_search_form_hook();
       break;
     case "Civi\Angular\Page\Main":
       break;
