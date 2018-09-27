@@ -60,10 +60,26 @@ function uimods_adjustSummaryView() {
 
 }
 
+function check_website(){
+    var website = cj(this).val();
+    if (!website) {
+        return;
+    }
+    var match = website.search(/^https?:\/\//i);
+    if (match !== 0) {
+        website = 'http://' + website;
+        cj(this).val(website)
+    }
+}
+
 cj(document).ready(function () {
   // call adjustment once
   uimods_adjustSummaryView();
 
   // inject data dependency
   cj(document).bind("ajaxComplete", uimods_adjustSummaryView);
+
+  // add trigger for website field (#7091)
+  cj(document).on('change', '#website_1_url', check_website);
+
 });
