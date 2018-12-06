@@ -115,8 +115,8 @@ function uimods_civicrm_buildForm($formName, &$form) {
       break;
     case "Civi\Angular\Page\Main":
       break;
-    case 'CRM_Admin_Form_ScheduleReminders':
-      CRM_Uimods_AdminScheduleReminders::createUserWarning($formName, $form);
+//    case 'CRM_Admin_Form_ScheduleReminders':
+//      CRM_Uimods_AdminScheduleReminders::createUserWarning($formName, $form);
     default:
       break;
   }
