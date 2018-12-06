@@ -29,7 +29,7 @@ class CRM_Uimods_AdminScheduleReminders{
    */
   public static function createUserWarning($formName, &$form) {
     CRM_Core_Session::setStatus(
-      "Wenn der Reminder für heute konfiguriert ist, dann wird er innerhalb der nächsten 10 Minuten automatisch an alle Teilnehmer verschickt. Bitte den Inhalt der Email gegenchecken. </br></br> Wenn noch kein Versand-Termin feststeht kann man die Erinnerung auch bis auf weiteres deaktivieren.",
+      "Wenn der Reminder für heute konfiguriert ist, dann wird er innerhalb der nächsten 10 Minuten automatisch an alle Teilnehmer verschickt. Bitte den Inhalt der Email gegenchecken.",
       ts("Event Reminder Warning"),
       "error",
       array('unique' => true, 'expires' => 0));
@@ -38,7 +38,7 @@ class CRM_Uimods_AdminScheduleReminders{
 
   public static function validate_reminder(&$fields, &$files, &$form, &$errors) {
     if (empty($fields['absolute_date']) && empty($fields['start_action_offset'])) {
-      $errors['absolute_date']       = 'Bitte setzen sie ein gültiges Versand Datum für den Reminder';
+      $errors['absolute_date']       = "Bitte setzen sie ein gültiges Versand Datum für den Reminder</br></br> Wenn noch kein Versand-Termin feststeht kann man die Erinnerung auch bis auf weiteres deaktivieren.";
     }
   }
 }
