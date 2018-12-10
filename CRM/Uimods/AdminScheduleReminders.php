@@ -38,7 +38,7 @@ class CRM_Uimods_AdminScheduleReminders{
 
   public static function validate_reminder(&$fields, &$files, &$form, &$errors) {
     if (empty($fields['absolute_date']) && empty($fields['start_action_offset'])) {
-      $errors['absolute_date']       = "Bitte setzen sie ein gültiges Versand Datum für den Reminder</br></br> Wenn noch kein Versand-Termin feststeht kann man die Erinnerung auch bis auf weiteres deaktivieren.";
+      $errors['absolute_date']       = "Bitte setzen Sie ein gültiges Versand-Datum für den Reminder</br></br> Wenn noch kein Versand-Termin feststeht, kann man die Erinnerung auch bis auf weiteres deaktivieren.";
     }
   }
 }
