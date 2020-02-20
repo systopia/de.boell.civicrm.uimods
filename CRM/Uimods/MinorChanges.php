@@ -64,6 +64,18 @@ class CRM_Uimods_MinorChanges {
   }
 
   /**
+   * removes Print to PDF entry form the action menu
+   *
+   * Print Report (Bericht drucken) shall be used instead (#11511)
+   */
+  public static function buildFormHook_reportMenu() {
+    $form_hook_inline_script = file_get_contents(__DIR__ . '/../../js/report_pdf_generation.js');
+    CRM_Core_Region::instance('page-footer')->add(array(
+      'script' => $form_hook_inline_script,
+    ));
+  }
+
+  /**
    * edits the tokens in the JS-select2 field and hides elements
    *
    * elements are specified directly in the js array defined in the remove_tokens.js

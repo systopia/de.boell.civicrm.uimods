@@ -113,6 +113,8 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case "CRM_Event_Form_Search":
       CRM_Uimods_MinorChanges::build_search_form_hook();
       break;
+    case "CRM_Report_Form_Event_ParticipantListing":
+      CRM_Uimods_MinorChanges::buildFormHook_reportMenu();
     case "Civi\Angular\Page\Main":
       break;
 //    case 'CRM_Admin_Form_ScheduleReminders':
@@ -312,6 +314,14 @@ function uimods_civicrm_alterMailParams(&$params, $context) {
   }
 }
 
+/**
+ * Implements hook_civicrm_alterMailContent().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailContent/
+ */
+function uimods_civicrm_alterMailContent(&$content) {
+    error_log("https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailContent/ hook. Content: " . json_encode($content));
+}
 
 /**
  * Implements hook_civicrm_unsubscribeGroups().
