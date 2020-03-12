@@ -78,7 +78,7 @@ class CRM_Uimods_MergeAssistant
               FROM civicrm_address 
               WHERE master_id IN ({$conflicting_address_ids_string})");
             if ($conflicting_addresses_shared) {
-                $merge_warnings[] = "Bei diesen beiden Kontakten gibt es widersprüchliche geteilte Adressen. Diese werden beim Zusammenführen beschädigt und müssen im Nachgang korrigiert werden. Siehe hier: TODO";
+                $merge_warnings[] = 'Bei diesen beiden Kontakten gibt es widersprüchliche geteilte Adressen. Diese werden beim Zusammenführen beschädigt und müssen im Nachgang korrigiert werden. Siehe <a href="/docs/merge-hinweise">HIER</a>.';
             }
         }
 
