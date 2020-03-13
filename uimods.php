@@ -315,15 +315,6 @@ function uimods_civicrm_alterMailParams(&$params, $context) {
 }
 
 /**
- * Implements hook_civicrm_alterMailContent().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailContent/
- */
-function uimods_civicrm_alterMailContent(&$content) {
-    error_log("https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterMailContent/ hook. Content: " . json_encode($content));
-}
-
-/**
  * Implements hook_civicrm_unsubscribeGroups().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_unsubscribeGroups/
