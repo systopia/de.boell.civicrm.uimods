@@ -91,10 +91,12 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Contact_Form_Task_Email':
       CRM_Uimods_MinorChanges::editTokens();
       break;
+
     case 'CRM_Contact_Form_Inline_ContactInfo':
     case 'CRM_Contact_Form_Inline_CommunicationPreferences':
       CRM_Uimods_MinorChanges::buildFormHook_InlineEdit();
       break;
+
     case 'CRM_Contact_Form_Task_AddToGroup':
       if (!CRM_Core_Permission::check('edit groups')) {
         CRM_Core_Region::instance('page-footer')->add(array(
@@ -102,19 +104,29 @@ function uimods_civicrm_buildForm($formName, &$form) {
           ));
       }
       break;
+
     case 'CRM_Event_Form_Participant':
       require_once 'CRM/Uimods/ParticipantForm.php';
       CRM_Uimods_ParticipantForm::buildFormHook($formName, $form);
       break;
+
     // "Quick contact add Oraganisation (5680)
     case "CRM_Profile_Form_Edit":
       CRM_Uimods_OrganisationName::buildFormHook_quickOrganisationCreate($formName, $form);
       break;
+
     case "CRM_Event_Form_Search":
       CRM_Uimods_MinorChanges::build_search_form_hook();
       break;
+
     case "CRM_Report_Form_Event_ParticipantListing":
       CRM_Uimods_MinorChanges::buildFormHook_reportMenu();
+      break;
+
+    case 'CRM_Contact_Form_Merge':
+      CRM_Uimods_MergeAssistant::injectMergeWarnings($form);
+      break;
+
     case "Civi\Angular\Page\Main":
       break;
 //    case 'CRM_Admin_Form_ScheduleReminders':
