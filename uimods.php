@@ -104,6 +104,10 @@ function uimods_civicrm_buildForm($formName, &$form) {
           ));
       }
       break;
+    case 'CRM_Mailing_Form_Search':
+      // TODO: call Javascript to remove 'Rundschreiben ist archiviert' option von der Suche
+      CRM_Uimods_MailingSearch::removeIsArchiveSearchOption();
+      break;
 
     case 'CRM_Event_Form_Participant':
       require_once 'CRM/Uimods/ParticipantForm.php';
