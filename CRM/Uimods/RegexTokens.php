@@ -73,7 +73,7 @@ class CRM_Uimods_RegexTokens {
       $email_hash = crypt($contact['email']);
 
       // that's it:
-      return "https://www.boell.de/node/{$drupal_node_id}/civi_unregister/{$participant['id']}/{$contact['hash']}/{$contact['email']}/{$email_hash}";
+      return "https://calendar.boell.de/node/{$drupal_node_id}/civi_unregister/{$participant['id']}/{$contact['hash']}/{$contact['email']}/{$email_hash}";
 
     } catch(Exception $ex) {
       Civi::log()->debug('unregisterLink generation failed: ' . $ex->getMessage());
