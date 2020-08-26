@@ -104,6 +104,10 @@ function uimods_civicrm_buildForm($formName, &$form) {
           ));
       }
       break;
+    case 'CRM_Mailing_Form_Search':
+      // TODO: call Javascript to remove 'Rundschreiben ist archiviert' option von der Suche
+      CRM_Uimods_MailingSearch::removeIsArchiveSearchOption();
+      break;
 
     case 'CRM_Event_Form_Participant':
       require_once 'CRM/Uimods/ParticipantForm.php';
@@ -324,6 +328,22 @@ function uimods_civicrm_alterMailParams(&$params, $context) {
       $params['toName'] = '';
     }
   }
+}
+
+/**
+ * Implements hook_civicrm_links().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_links
+ */
+function uimods_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+    // remove 'Delete' links in scheduled i.e. (non-archived) mailings, see #11961
+    if ($op == 'view.mailing.browse.scheduled') {
+        foreach (array_keys($links) as $link_key) {
+            if (!empty($links[$link_key]['qs']) && strstr($links[$link_key]['qs'], 'action=delete')) {
+                unset($links[$link_key]);
+            }
+        }
+    }
 }
 
 /**
