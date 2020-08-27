@@ -68,9 +68,9 @@ class CRM_Uimods_RegexTokens {
       if (empty($contact['email'])) {
         return $FALLBACK;
       }
-
-      // generate email_hash
       $email_hash = crypt($contact['email']);
+      // generate email_hash
+      $email_hash = urlencode(urlencode(urlencode($email_hash)));
 
       // that's it:
       return "https://calendar.boell.de/node/{$drupal_node_id}/civi_unregister/{$participant['id']}/{$contact['hash']}/{$contact['email']}/{$email_hash}";
