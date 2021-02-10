@@ -57,7 +57,8 @@ class CRM_Uimods_NameTokens {
       $data = civicrm_api3('Contact', 'get', array(
         'contact_id'   => array('IN' => $contact_ids),
         'contact_type' => 'Organization',
-        'return' =>  "{$field_name_1},{$field_name_2}"
+        'return' =>  "{$field_name_1},{$field_name_2}",
+        'options'          => array('limit' => 0)
         ));
 
       foreach ($contact_ids as $contact_id) {
