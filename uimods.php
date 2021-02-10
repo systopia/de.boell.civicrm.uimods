@@ -62,7 +62,6 @@ function uimods_civicrm_permission(&$permissions) {
  */
 function uimods_civicrm_pageRun(&$page) {
   $page_name = $page->getVar('_name');
-//  error_log("PBADEBUG PAGE: {$page_name}");
   switch ($page_name) {
     case 'CRM_Contact_Page_View_Summary':
       CRM_Uimods_OrganisationName::pageRunHook($page);
