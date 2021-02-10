@@ -131,10 +131,10 @@ function uimods_civicrm_buildForm($formName, &$form) {
       CRM_Uimods_MergeAssistant::injectMergeWarnings($form);
       break;
 
+    case 'CRM_Admin_Form_ScheduleReminders':
+      CRM_Uimods_AdminScheduleReminders::createUserWarning($formName, $form);
+
     case "Civi\Angular\Page\Main":
-      break;
-//    case 'CRM_Admin_Form_ScheduleReminders':
-//      CRM_Uimods_AdminScheduleReminders::createUserWarning($formName, $form);
     default:
       break;
   }
