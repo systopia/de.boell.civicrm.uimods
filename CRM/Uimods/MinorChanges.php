@@ -56,7 +56,7 @@ class CRM_Uimods_MinorChanges {
    * @param $formName
    * @param $form
    */
-  public static function buildFormHook_InlineEdit($formName, &$form) {
+  public static function buildFormHook_InlineEdit() {
     $form_hook_inline_script = file_get_contents(__DIR__ . '/../../js/minor_changes_inline_form.js');
     CRM_Core_Region::instance('page-footer')->add(array(
       'script' => $form_hook_inline_script,
