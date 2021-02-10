@@ -47,4 +47,9 @@ cj("#sic_code").hide();
 cj(document).ready(function () {
     // call adjustment once
     cj("#expand").click();
+
+    // #13745
+    cj(document).bind("ajaxComplete", function(){
+        cj(".shared-address-add-relationship").hide()
+    });
 });
