@@ -20,7 +20,11 @@ class CRM_Uimods_MailingPermission {
    * Specify the new setting
    */
   public static function specify(&$permissions) {
-    $permissions['mailing approval'] = ts('CiviMail (Massenmailings): Freigabe');
+    $prefix = ts('de.boell.civicrm.uimods') . ': ';
+    $permissions['mailing approval'] = [
+      'label' => $prefix . ts('CiviMail (Massenmailings): Freigabe'),
+      'description' => ts('Permission to use Mass Mailings. Customized for HBS.')
+    ];
   }
 
   /**
