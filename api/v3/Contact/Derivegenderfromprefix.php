@@ -27,8 +27,8 @@ function civicrm_api3_contact_derivegenderfromprefix($params) {
     );
 
   $genders = array(
-    'Male'   => CRM_Core_OptionGroup::getValue('gender', 'männlich', 'label'),
-    'Female' => CRM_Core_OptionGroup::getValue('gender', 'weiblich', 'label')
+    'Male'   => CRM_Legacycode_OptionGroup::getValue('gender', 'männlich', 'label'),
+    'Female' => CRM_Legacycode_OptionGroup::getValue('gender', 'weiblich', 'label')
     );
 
   if (empty($genders['Male']) || empty($genders['Female'])) {
@@ -39,7 +39,7 @@ function civicrm_api3_contact_derivegenderfromprefix($params) {
   foreach ($mapping as $gender_name => $prefixes) {
     $gender_id = $genders[$gender_name];
     foreach ($prefixes as $prefix_label) {
-      $prefix_id = CRM_Core_OptionGroup::getValue('individual_prefix', $prefix_label, 'label');
+      $prefix_id = CRM_Legacycode_OptionGroup::getValue('individual_prefix', $prefix_label, 'label');
       if (!empty($prefix_id)) {
         $prefix2gender[$prefix_id] = $gender_id;
       }
